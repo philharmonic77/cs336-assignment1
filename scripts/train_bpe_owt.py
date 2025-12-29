@@ -32,7 +32,7 @@ def main() -> None:
     end = time.perf_counter()
     print(f"\nElapsed time: {end - start:.6f} seconds")
 
-    output_dir = repo_root / "cs336_basics" / "artifacts" / "bpe"
+    output_dir = repo_root / "artifacts" / "bpe"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     vocab_out = {str(idx): _bytes_to_str(tok) for idx, tok in vocab.items()}
