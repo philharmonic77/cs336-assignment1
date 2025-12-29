@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 import regex as re
 from dataclasses import dataclass
 from collections import Counter
@@ -70,7 +71,11 @@ def train_byte_level_bpe(
     merges: list[tuple[bytes, bytes]] = []
     next_id = max(vocab.keys()) + 1
 
-    while len(vocab) < vocab_size:
+    last_report = time.perf_counter()
+    start_time = time.perf_counter()
+    last_report = start_time
+
+    while len(vocab) < vocab_size:       
         # TODO: optimize by maintaining pair_freq incrementally instead of full recompute.
         pair_freq = _count_pairs(words)
         if not pair_freq:
@@ -86,6 +91,15 @@ def train_byte_level_bpe(
 
         new_words = _apply_merge(words, best_pair, new_id)
         words = new_words
+        
+        if len(vocab) % 500 == 0:
+            now = time.perf_counter()
+            print(
+                f"[bpe] vocab={len(vocab)} merges={len(merges)} "
+                f"elapsed={now - start_time:.1f}s "
+                f"delta={now - last_report:.1f}s"
+            )
+            last_report = now
 
     return vocab, merges
 
