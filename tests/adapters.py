@@ -9,7 +9,7 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
-from cs336_basics.train_bpe import ParallelConfig, train_byte_level_bpe
+from cs336_basics.train_bpe import ParallelConfig, train_byte_level_bpe_incremental
 
 
 def run_linear(
@@ -596,7 +596,7 @@ def run_train_bpe(
         num_workers=8, 
         boundary_token="<|endoftext|>",
     )
-    return train_byte_level_bpe(
+    return train_byte_level_bpe_incremental(
         input_path=input_path,
         vocab_size=vocab_size,
         special_tokens=special_tokens,

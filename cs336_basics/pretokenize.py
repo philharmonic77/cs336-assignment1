@@ -1,5 +1,5 @@
 from collections import Counter
-import re
+import regex as re
 
 
 def _compile_special_pattern(special_tokens: list[str]) -> re.Pattern[str]:
@@ -37,7 +37,7 @@ def _chunk_to_word_freq(
 
 if __name__ == '__main__':
 
-    special_tokens = {"<|endoftext|>"}
+    special_tokens = list({"<|endoftext|>"})
     special_pattern = _compile_special_pattern(list(special_tokens))
     pretoken_pattern = re.compile(r"[A-Za-z]+")
 

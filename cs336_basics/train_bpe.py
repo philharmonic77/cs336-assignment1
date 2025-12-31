@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+import os
 import regex as re
 from dataclasses import dataclass
 from collections import Counter
@@ -18,7 +19,7 @@ class ParallelConfig:
 
 
 def train_byte_level_bpe(
-    input_path: str,
+    input_path: str | os.PathLike[str],
     vocab_size: int,
     special_tokens: list[str],
     *,
@@ -55,6 +56,9 @@ def train_byte_level_bpe(
     PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
     pretoken_pattern = re.compile(PAT)
 
+    if len(set(special_tokens)) != len(special_tokens):
+        raise ValueError("special_tokens contains duplicates")
+
     word_freq = _build_word_freq(
         input_path,
         special_tokens=special_tokens,
@@ -76,23 +80,109 @@ def train_byte_level_bpe(
     last_report = start_time
 
     while len(vocab) < vocab_size:       
-        # TODO: optimize by maintaining pair_freq incrementally instead of full recompute.
         pair_freq = _count_pairs(words)
         if not pair_freq:
             break
         best_pair = _select_pair(pair_freq, vocab)
 
-        a, b = vocab[best_pair[0]], vocab[best_pair[1]]
+        left_bytes, right_bytes = vocab[best_pair[0]], vocab[best_pair[1]]
 
-        merges.append((a, b))
+        merges.append((left_bytes, right_bytes))
         new_id = next_id
         next_id += 1
-        vocab[new_id] = a + b
+        vocab[new_id] = left_bytes + right_bytes
 
         new_words = _apply_merge(words, best_pair, new_id)
         words = new_words
         
-        if len(vocab) % 500 == 0:
+        if len(vocab) % 100 == 0:
+            now = time.perf_counter()
+            print(
+                f"[bpe] vocab={len(vocab)} merges={len(merges)} "
+                f"elapsed={now - start_time:.1f}s "
+                f"delta={now - last_report:.1f}s"
+            )
+            last_report = now
+
+    return vocab, merges
+
+def train_byte_level_bpe_incremental(
+    input_path: str | os.PathLike[str],
+    vocab_size: int,
+    special_tokens: list[str],
+    *,
+    encoding: str = "utf-8",
+    parallel: ParallelConfig | None = None
+) -> tuple[dict[int, bytes], list[tuple[bytes, bytes]]]:
+    
+    PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+    pretoken_pattern = re.compile(PAT)
+
+    if len(set(special_tokens)) != len(special_tokens):
+        raise ValueError("special_tokens contains duplicates")
+
+    word_freq = _build_word_freq(
+        input_path,
+        special_tokens=special_tokens,
+        pretoken_pattern=pretoken_pattern,
+        parallel=parallel
+    )
+
+    vocab, words = _init_symbol_vocab_and_words(
+        word_freq,
+        special_tokens=special_tokens,
+        encoding=encoding
+    )
+
+    # init word_seq(wid->seq), word_freq(wid->freq)  
+    wid_seq : dict[int, tuple[int, ...]] = {}
+    wid_freq : dict[int, int] = {}
+    for i, (word, freq) in enumerate(words.items()):
+        wid_seq[i] = word
+        wid_freq[i] = freq
+
+    # init pair_freq and pair_to_word
+    pair_freq, pair_to_word = _init_pair_freq_and_pair_to_word(wid_seq, wid_freq) 
+
+    merges: list[tuple[bytes, bytes]] = []
+    next_id = max(vocab.keys()) + 1
+
+    last_report = time.perf_counter()
+    start_time = time.perf_counter()
+    last_report = start_time
+
+    while len(vocab) < vocab_size:
+        if not pair_freq: # 完全没有pair可以merge，break
+            break
+        best_pair = _select_pair(pair_freq, vocab)
+
+        left_bytes, right_bytes = vocab[best_pair[0]], vocab[best_pair[1]]
+
+        merges.append((left_bytes, right_bytes))
+        new_id = next_id
+        next_id += 1
+        vocab[new_id] = left_bytes + right_bytes
+   
+        affected_words = pair_to_word.get(best_pair, set()).copy()
+
+        for wid in affected_words:
+            new_seq = _update_one_word(wid,
+                                       new_id,
+                                       best_pair,
+                                       wid_freq[wid], 
+                                       wid_seq[wid], 
+                                       pair_freq, 
+                                       pair_to_word) 
+            wid_seq[wid] = new_seq
+        
+        # 轮次结束后清理
+        if not pair_to_word.get(best_pair):
+            pair_to_word.pop(best_pair, None)
+
+        if pair_freq.get(best_pair, 0) == 0:
+            pair_freq.pop(best_pair, None)
+
+        if len(vocab) % 100 == 0:
             now = time.perf_counter()
             print(
                 f"[bpe] vocab={len(vocab)} merges={len(merges)} "
@@ -104,13 +194,94 @@ def train_byte_level_bpe(
     return vocab, merges
 
 
+def _update_one_word(wid: int,
+                     new_id: int,
+                     best_pair: tuple[int, int],
+                     freq: int, 
+                     seq: tuple[int, ...], 
+                     pair_freq: dict[tuple[int, int], int], 
+                     pair_to_word: dict[tuple[int, int], set[int]]) -> tuple[int, ...]:
+
+    # 撤销old seq的影响
+    L = len(seq)
+    seen_pair = set()
+    for i in range(L - 1):
+        p = (seq[i], seq[i + 1])
+
+        pair_freq[p] = pair_freq.get(p, 0) - freq 
+        if pair_freq[p] == 0:
+            pair_freq.pop(p, None)
+
+        if p not in seen_pair:
+            # 1.如果 p 这个 key 存在，就把 wid 从集合里删掉（discard）
+	        # 2.删完后如果集合变空，就把 key 从 dict 里删掉（pop）
+            s = pair_to_word.get(p)
+            if s is not None:
+                pair_to_word[p].discard(wid)
+                if not s:
+                    pair_to_word.pop(p, None)
+            seen_pair.add(p)
+
+    # merge new seq
+    out = []
+    i = 0
+    while i < L:
+        if i < L - 1 and seq[i] == best_pair[0] and seq[i + 1] == best_pair[1]:
+            out.append(new_id)
+            i += 2
+        else:
+            out.append(seq[i])
+            i += 1
+    new_seq = tuple(out) 
+
+    # 统计new seq的影响
+    new_L = len(new_seq)
+    new_seen_pair = set()
+
+    for i in range(new_L - 1):  
+        p = (new_seq[i], new_seq[i + 1])
+        pair_freq[p] = pair_freq.get(p, 0) + freq
+
+        if p not in new_seen_pair:
+            pair_to_word.setdefault(p, set()).add(wid)
+            new_seen_pair.add(p)
+
+    return new_seq
+
+def _init_pair_freq_and_pair_to_word(word_seq: dict[int, tuple[int, ...]], 
+                                     word_freq: dict[int, int]
+                                     ) -> tuple[dict[tuple[int, int], int], dict[tuple[int, int], set[int]]]:
+
+    pair_freq: dict[tuple[int, int], int] = {}
+    pair_to_word: dict[tuple[int, int], set[int]] = {}
+
+    for wid, seq in word_seq.items():
+        if len(seq) < 2:
+            continue
+        
+        seen_pair: set[tuple[int, int]] = set()
+
+        prev = seq[0]
+        for x in seq[1:]:
+            p = (prev, x)
+            pair_freq[p] = pair_freq.get(p, 0) + word_freq[wid]
+            seen_pair.add(p)
+            prev = x
+
+        for p in seen_pair:
+            if p in pair_to_word:
+                pair_to_word[p].add(wid)
+            else:
+                pair_to_word[p] = {wid}
+    return pair_freq, pair_to_word
+
 def _build_chunk_for_worker(
-    input_path: str,
+    input_path: str | os.PathLike[str],
     start: int,
     end: int,
     special_tokens: list[str],
-    special_pattern: re.Pattern,
-    pretoken_pattern: re.Pattern,
+    special_pattern,
+    pretoken_pattern,
 ) -> Counter[str]:
     with open(input_path, "rb") as f:
         f.seek(start)
@@ -125,10 +296,10 @@ def _build_chunk_for_worker(
 
 
 def _build_word_freq(
-    input_path: str,
+    input_path: str | os.PathLike[str],
     *,
-    special_tokens: list[str],
-    pretoken_pattern: re.Pattern[str],
+    special_tokens:  list[str],
+    pretoken_pattern,
     parallel: ParallelConfig | None = None,
 ) -> Counter[str]:
     special_pattern = _compile_special_pattern(special_tokens)

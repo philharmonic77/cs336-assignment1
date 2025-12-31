@@ -6,7 +6,7 @@ from pathlib import Path
 import json
 import sys
 
-from cs336_basics.train_bpe import train_byte_level_bpe, ParallelConfig
+from cs336_basics.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
 
 def _bytes_to_str(b: bytes) -> str:
     return b.decode("latin-1")
@@ -23,7 +23,7 @@ def main() -> None:
     profiler.enable()
 
     start = time.perf_counter()
-    vocab, merges = train_byte_level_bpe(
+    vocab, merges = train_byte_level_bpe_incremental(
         input_path=str(repo_root / "data" / "owt_train.txt"),
         vocab_size=320000,
         special_tokens=["<|endoftext|>"],

@@ -39,8 +39,8 @@ UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected
 ```
 
 #### Problem (train_bpe_tinystories): BPE Training on TinyStories
-(a) It takes me 16.93 minutes and 0.139G memory to train BPE and tinystores. The longest token in the vocab is `' accomplishment'`, which make sense.  
-(b) `_count_pairs` function takes 6.36 min and `_apply_merge` function takes 4.03 min. These 2 steps take the most time.
+(a) It takes me 125.79 seconds and 0.121G memory to train BPE on tinystores. The longest token in the vocab is `' accomplishment'`, which make sense.  
+(b) The step `_select_pair` function takes the most time, which is 90 seconds. Besides, `_build_word_freq` takes 30 seconds.
 
 
 
