@@ -187,7 +187,10 @@ def train_byte_level_bpe_incremental(
             print(
                 f"[bpe] vocab={len(vocab)} merges={len(merges)} "
                 f"elapsed={now - start_time:.1f}s "
-                f"delta={now - last_report:.1f}s"
+                f"delta={now - last_report:.1f}s "
+                f"pair_freq={len(pair_freq)} "
+                f"pair_to_word={len(pair_to_word)} "
+                f"affected_words={len(affected_words)}"
             )
             last_report = now
 
