@@ -508,7 +508,7 @@ def _heap_pop_best_pair_max_lazy(
 
         same_freq_valid: list[HeapItem] = [(neg_f, a, b)]
 
-        # 注意：堆里同频条目可能很多，但通常不会爆炸；而且 stale 会被过滤
+        # 候选lazy验证+找best
         while heap and -heap[0][0] == f:
             neg2, a2, b2 = heapq.heappop(heap)
             if pair_freq.get((a2, b2), 0) != f:
