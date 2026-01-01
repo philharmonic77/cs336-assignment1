@@ -3,6 +3,8 @@ from __future__ import annotations
 import time
 import os
 import regex as re
+import heapq
+from typing import Optional
 from dataclasses import dataclass
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
@@ -16,6 +18,8 @@ class ParallelConfig:
     desired_num_chunks: int
     num_workers: int | None = None
     boundary_token: str = "<|endoftext|>"
+
+HeapItem = tuple[int, int, int]  # (-freq, a, b)
 
 
 def train_byte_level_bpe(
@@ -144,6 +148,11 @@ def train_byte_level_bpe_incremental(
     # init pair_freq and pair_to_word
     pair_freq, pair_to_word = _init_pair_freq_and_pair_to_word(wid_seq, wid_freq) 
 
+    # init pair heap
+    heap: list = []
+    for p in pair_freq:
+        _heap_push_max_lazy(heap, p, pair_freq)
+
     merges: list[tuple[bytes, bytes]] = []
     next_id = max(vocab.keys()) + 1
 
@@ -152,10 +161,13 @@ def train_byte_level_bpe_incremental(
     last_report = start_time
 
     while len(vocab) < vocab_size:
-        if not pair_freq: # 完全没有pair可以merge，break
+        # 完全没有pair可以merge，break
+        if not pair_freq: 
             break
-        best_pair = _select_pair(pair_freq, vocab)
-
+        
+        best_pair = _heap_pop_best_pair_max_lazy(heap, pair_freq, vocab)
+        if best_pair is None:
+            break
         left_bytes, right_bytes = vocab[best_pair[0]], vocab[best_pair[1]]
 
         merges.append((left_bytes, right_bytes))
@@ -172,7 +184,8 @@ def train_byte_level_bpe_incremental(
                                        wid_freq[wid], 
                                        wid_seq[wid], 
                                        pair_freq, 
-                                       pair_to_word) 
+                                       pair_to_word,
+                                       heap) 
             wid_seq[wid] = new_seq
         
         # 轮次结束后清理
@@ -203,7 +216,8 @@ def _update_one_word(wid: int,
                      freq: int, 
                      seq: tuple[int, ...], 
                      pair_freq: dict[tuple[int, int], int], 
-                     pair_to_word: dict[tuple[int, int], set[int]]) -> tuple[int, ...]:
+                     pair_to_word: dict[tuple[int, int], set[int]],
+                     heap: list[HeapItem]) -> tuple[int, ...]:
 
     # 撤销old seq的影响
     L = len(seq)
@@ -214,6 +228,8 @@ def _update_one_word(wid: int,
         pair_freq[p] = pair_freq.get(p, 0) - freq 
         if pair_freq[p] == 0:
             pair_freq.pop(p, None)
+
+        _heap_push_max_lazy(heap, p, pair_freq)
 
         if p not in seen_pair:
             # 1.如果 p 这个 key 存在，就把 wid 从集合里删掉（discard）
@@ -244,6 +260,8 @@ def _update_one_word(wid: int,
     for i in range(new_L - 1):  
         p = (new_seq[i], new_seq[i + 1])
         pair_freq[p] = pair_freq.get(p, 0) + freq
+        
+        _heap_push_max_lazy(heap, p, pair_freq)
 
         if p not in new_seen_pair:
             pair_to_word.setdefault(p, set()).add(wid)
@@ -453,6 +471,63 @@ def _apply_merge(
                 assert not (seq[i] == a and seq[i + 1] == b)
 
     return new_words
+
+def _heap_push_max_lazy(
+    heap: list[HeapItem],
+    pair: tuple[int, int],
+    pair_freq: dict[tuple[int, int], int],
+) -> None:
+    f = pair_freq.get(pair, 0)
+    if f > 0:
+        a, b = pair
+        heapq.heappush(heap, (-f, a, b))
+
+
+def _heap_pop_best_pair_max_lazy(
+    heap: list[HeapItem],
+    pair_freq: dict[tuple[int, int], int],
+    vocab: dict[int, bytes],
+) -> Optional[tuple[int, int]]:
+    """
+    Pop the best pair under:
+      - max frequency
+      - tie-break: lexicographically greater (vocab[a], vocab[b])
+    Uses lazy deletion: stale heap entries are discarded.
+    """
+    while heap:
+        neg_f, a, b = heapq.heappop(heap)
+        f = -neg_f
+
+        # lazy 验证：如果这个条目不是当前真值，丢弃
+        if pair_freq.get((a, b), 0) != f or f <= 0:
+            continue
+
+        # 收集所有 “同频 f” 的有效候选，做 tie-break（取 bytes 字典序最大的）
+        best = (a, b)
+        best_key = (vocab[a], vocab[b])
+
+        same_freq_valid: list[HeapItem] = [(neg_f, a, b)]
+
+        # 注意：堆里同频条目可能很多，但通常不会爆炸；而且 stale 会被过滤
+        while heap and -heap[0][0] == f:
+            neg2, a2, b2 = heapq.heappop(heap)
+            if pair_freq.get((a2, b2), 0) != f:
+                continue  # stale
+            same_freq_valid.append((neg2, a2, b2))
+            k2 = (vocab[a2], vocab[b2])
+            if k2 > best_key:
+                best = (a2, b2)
+                best_key = k2
+
+        # 把同频里没选中的有效候选放回去（保持后续可用）
+        for item in same_freq_valid:
+            _, a2, b2 = item
+            if (a2, b2) != best:
+                heapq.heappush(heap, item)
+
+        return best
+
+    return None
 
 
 if __name__ == "__main__":
