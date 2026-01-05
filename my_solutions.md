@@ -48,18 +48,20 @@ version 2: using heap to select best pair
 
 #### Problem (train_bpe_expts_owt): BPE Training on OpenWebText
 (a) It takes me 7125 seconds and 24.346 G memory to train BPE, the logs during training can be found at [here](logs/train_bpe_owt_log.txt).   
-<div style="display:flex; gap:20px;">
-  <div>
+<table>
+<tr>
+<td>
 
 ![vocab size vs time](logs/train_bpe_owt_figure_speed.jpeg)
 
-  </div>
-  <div>
-  
+</td>
+<td>
+
 ![vocab size vs pair size](logs/train_bpe_owt_figure_vocab_vs_pair.jpeg)
 
-  </div>
-</div>
+</td>
+</tr>
+</table>
 The longest token in the vocab is `'Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82'`, and this does make sense for a byte-level BPE tokenizer.
 
 This token is not meant to represent a readable character or word. It is a high-frequency byte sequence that appears repeatedly in the training corpus. The pattern `Ã\x83Ã\x82` corresponds to a specific UTF-8 byte sequence that commonly arises from misinterpreted or re-encoded UTF-8 text (often called mojibake).
