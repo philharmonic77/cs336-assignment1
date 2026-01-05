@@ -42,7 +42,8 @@ UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected
 (a) It takes me 125.79 seconds and 0.121G memory to train BPE on tinystores. The longest token in the vocab is `' accomplishment'`, which make sense.  
 (b) The step `_select_pair` function takes the most time, which is 90 seconds. Besides, `_build_word_freq` takes 30 seconds.
 
-version 2: using heap to select best pair
+**version 2: Using heap to select best pair**
+
 (a) It takes me 42.39 seconds and 0.219G memory to train BPE on tinystores. The longest token in the vocab is `' accomplishment'`, which make sense.  
 (b) The step `_build_word_freq` function takes the most time, which is 30 seconds. 
 

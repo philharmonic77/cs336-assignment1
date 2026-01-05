@@ -2,14 +2,15 @@ from collections import Counter
 import regex as re
 
 
-def _compile_special_pattern(special_tokens: list[str]) -> re.Pattern[str]:
+def compile_special_pattern(special_tokens: list[str]) -> re.Pattern[str]:
     if not special_tokens:
         return re.compile('(?!x)x') # a regexp that never match
+    special_tokens = sorted(special_tokens, key=len, reverse=True) # 最长优先匹配
     escaped_tokens = [re.escape(tok) for tok in special_tokens]
     pattern_str = "(" + "|".join(escaped_tokens) + ")"
     return re.compile(pattern_str)
 
-def _split_by_special_tokens(text:str, pat: re.Pattern[str]) -> list[str]:
+def split_by_special_tokens(text: str, pat: re.Pattern[str]) -> list[str]:
     return [p for p in pat.split(text) if p != '']
 
 def _chunk_to_word_freq(
@@ -20,7 +21,7 @@ def _chunk_to_word_freq(
         pretoken_pattern: re.Pattern[str]
         ) -> Counter[str]:
     counter = Counter()
-    pieces = _split_by_special_tokens(chunk, special_pattern)
+    pieces = split_by_special_tokens(chunk, special_pattern)
 
     for p in pieces:
         if p in special_tokens:
@@ -38,7 +39,7 @@ def _chunk_to_word_freq(
 if __name__ == '__main__':
 
     special_tokens = list({"<|endoftext|>"})
-    special_pattern = _compile_special_pattern(list(special_tokens))
+    special_pattern = compile_special_pattern(list(special_tokens))
     pretoken_pattern = re.compile(r"[A-Za-z]+")
 
     text = "<|endoftext|>!!!<|endoftext|>"

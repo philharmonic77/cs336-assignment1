@@ -10,7 +10,7 @@ from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 
 from cs336_basics.chunking import _find_chunk_boundaries
-from cs336_basics.pretokenize import _chunk_to_word_freq, _compile_special_pattern
+from cs336_basics.pretokenize import _chunk_to_word_freq, compile_special_pattern
 
 
 @dataclass(frozen=True)
@@ -323,7 +323,7 @@ def _build_word_freq(
     pretoken_pattern,
     parallel: ParallelConfig | None = None,
 ) -> Counter[str]:
-    special_pattern = _compile_special_pattern(special_tokens)
+    special_pattern = compile_special_pattern(special_tokens)
 
     if parallel is None:
         with open(input_path, "r") as f:
