@@ -1,0 +1,360 @@
+(.venv) root@autodl-container-de2a45a334-13b65e03:~/autodl-tmp/cs336-assignment1# uv run python scripts/train_bpe_owt.py 
+[bpe] vocab=300 merges=43 elapsed=837.4s delta=837.4s pair_freq=25678 pair_to_word=25678 affected_words=144201
+[bpe] vocab=400 merges=143 elapsed=1749.2s delta=911.8s pair_freq=43930 pair_to_word=43930 affected_words=83198
+[bpe] vocab=500 merges=243 elapsed=2217.4s delta=468.2s pair_freq=66825 pair_to_word=66825 affected_words=22412
+[bpe] vocab=600 merges=343 elapsed=2506.0s delta=288.6s pair_freq=94508 pair_to_word=94508 affected_words=10494
+[bpe] vocab=700 merges=443 elapsed=2716.2s delta=210.1s pair_freq=118630 pair_to_word=118630 affected_words=264
+[bpe] vocab=800 merges=543 elapsed=2901.7s delta=185.6s pair_freq=142937 pair_to_word=142937 affected_words=6726
+[bpe] vocab=900 merges=643 elapsed=3017.3s delta=115.6s pair_freq=165296 pair_to_word=165296 affected_words=347
+[bpe] vocab=1000 merges=743 elapsed=3128.9s delta=111.6s pair_freq=191540 pair_to_word=191540 affected_words=628
+[bpe] vocab=1100 merges=843 elapsed=3235.0s delta=106.1s pair_freq=216932 pair_to_word=216932 affected_words=2544
+[bpe] vocab=1200 merges=943 elapsed=3320.2s delta=85.2s pair_freq=238218 pair_to_word=238218 affected_words=380
+[bpe] vocab=1300 merges=1043 elapsed=3402.5s delta=82.4s pair_freq=260120 pair_to_word=260120 affected_words=109
+[bpe] vocab=1400 merges=1143 elapsed=3477.0s delta=74.4s pair_freq=281325 pair_to_word=281325 affected_words=6624
+[bpe] vocab=1500 merges=1243 elapsed=3533.4s delta=56.4s pair_freq=298974 pair_to_word=298974 affected_words=353
+[bpe] vocab=1600 merges=1343 elapsed=3602.9s delta=69.5s pair_freq=322167 pair_to_word=322167 affected_words=188
+[bpe] vocab=1700 merges=1443 elapsed=3653.0s delta=50.1s pair_freq=341975 pair_to_word=341975 affected_words=7593
+[bpe] vocab=1800 merges=1543 elapsed=3693.0s delta=40.0s pair_freq=359870 pair_to_word=359870 affected_words=59
+[bpe] vocab=1900 merges=1643 elapsed=3740.7s delta=47.7s pair_freq=378199 pair_to_word=378199 affected_words=1848
+[bpe] vocab=2000 merges=1743 elapsed=3797.9s delta=57.1s pair_freq=399299 pair_to_word=399299 affected_words=2571
+[bpe] vocab=2100 merges=1843 elapsed=3837.8s delta=39.9s pair_freq=418270 pair_to_word=418270 affected_words=602
+[bpe] vocab=2200 merges=1943 elapsed=3877.4s delta=39.6s pair_freq=435803 pair_to_word=435803 affected_words=5962
+[bpe] vocab=2300 merges=2043 elapsed=3912.2s delta=34.8s pair_freq=454536 pair_to_word=454536 affected_words=59
+[bpe] vocab=2400 merges=2143 elapsed=3951.6s delta=39.4s pair_freq=470386 pair_to_word=470386 affected_words=1641
+[bpe] vocab=2500 merges=2243 elapsed=3993.5s delta=41.9s pair_freq=487764 pair_to_word=487764 affected_words=213
+[bpe] vocab=2600 merges=2343 elapsed=4023.0s delta=29.5s pair_freq=505869 pair_to_word=505869 affected_words=24
+[bpe] vocab=2700 merges=2443 elapsed=4052.8s delta=29.8s pair_freq=524691 pair_to_word=524691 affected_words=2391
+[bpe] vocab=2800 merges=2543 elapsed=4094.1s delta=41.3s pair_freq=539445 pair_to_word=539445 affected_words=28
+[bpe] vocab=2900 merges=2643 elapsed=4120.4s delta=26.3s pair_freq=553946 pair_to_word=553946 affected_words=656
+[bpe] vocab=3000 merges=2743 elapsed=4149.3s delta=28.9s pair_freq=567627 pair_to_word=567627 affected_words=58
+[bpe] vocab=3100 merges=2843 elapsed=4182.5s delta=33.2s pair_freq=587610 pair_to_word=587610 affected_words=635
+[bpe] vocab=3200 merges=2943 elapsed=4226.9s delta=44.4s pair_freq=607332 pair_to_word=607332 affected_words=8200
+[bpe] vocab=3300 merges=3043 elapsed=4249.9s delta=23.0s pair_freq=620587 pair_to_word=620587 affected_words=38
+[bpe] vocab=3400 merges=3143 elapsed=4275.3s delta=25.3s pair_freq=637258 pair_to_word=637258 affected_words=35
+[bpe] vocab=3500 merges=3243 elapsed=4301.4s delta=26.1s pair_freq=656144 pair_to_word=656144 affected_words=119
+[bpe] vocab=3600 merges=3343 elapsed=4354.4s delta=53.0s pair_freq=670279 pair_to_word=670279 affected_words=372
+[bpe] vocab=3700 merges=3443 elapsed=4394.7s delta=40.3s pair_freq=683247 pair_to_word=683247 affected_words=49
+[bpe] vocab=3800 merges=3543 elapsed=4421.9s delta=27.2s pair_freq=701350 pair_to_word=701350 affected_words=301
+[bpe] vocab=3900 merges=3643 elapsed=4443.9s delta=22.0s pair_freq=715835 pair_to_word=715835 affected_words=249
+[bpe] vocab=4000 merges=3743 elapsed=4479.6s delta=35.8s pair_freq=734154 pair_to_word=734154 affected_words=37
+[bpe] vocab=4100 merges=3843 elapsed=4506.1s delta=26.5s pair_freq=749441 pair_to_word=749441 affected_words=369
+[bpe] vocab=4200 merges=3943 elapsed=4536.3s delta=30.2s pair_freq=762442 pair_to_word=762442 affected_words=2172
+[bpe] vocab=4300 merges=4043 elapsed=4560.4s delta=24.1s pair_freq=777895 pair_to_word=777895 affected_words=12
+[bpe] vocab=4400 merges=4143 elapsed=4583.3s delta=22.9s pair_freq=794450 pair_to_word=794450 affected_words=176
+[bpe] vocab=4500 merges=4243 elapsed=4601.3s delta=18.1s pair_freq=807413 pair_to_word=807413 affected_words=50
+[bpe] vocab=4600 merges=4343 elapsed=4622.6s delta=21.2s pair_freq=822302 pair_to_word=822302 affected_words=116
+[bpe] vocab=4700 merges=4443 elapsed=4656.7s delta=34.1s pair_freq=838197 pair_to_word=838197 affected_words=1305
+[bpe] vocab=4800 merges=4543 elapsed=4687.4s delta=30.7s pair_freq=852716 pair_to_word=852716 affected_words=11
+[bpe] vocab=4900 merges=4643 elapsed=4705.6s delta=18.1s pair_freq=867449 pair_to_word=867449 affected_words=15
+[bpe] vocab=5000 merges=4743 elapsed=4726.9s delta=21.3s pair_freq=886380 pair_to_word=886380 affected_words=1090
+[bpe] vocab=5100 merges=4843 elapsed=4753.3s delta=26.4s pair_freq=904587 pair_to_word=904587 affected_words=1318
+[bpe] vocab=5200 merges=4943 elapsed=4776.6s delta=23.3s pair_freq=917962 pair_to_word=917962 affected_words=18
+[bpe] vocab=5300 merges=5043 elapsed=4795.2s delta=18.6s pair_freq=930963 pair_to_word=930963 affected_words=29
+[bpe] vocab=5400 merges=5143 elapsed=4813.5s delta=18.3s pair_freq=946751 pair_to_word=946751 affected_words=885
+[bpe] vocab=5500 merges=5243 elapsed=4827.7s delta=14.1s pair_freq=958330 pair_to_word=958330 affected_words=4023
+[bpe] vocab=5600 merges=5343 elapsed=4854.9s delta=27.2s pair_freq=970377 pair_to_word=970377 affected_words=10
+[bpe] vocab=5700 merges=5443 elapsed=4868.9s delta=14.0s pair_freq=986864 pair_to_word=986864 affected_words=252
+[bpe] vocab=5800 merges=5543 elapsed=4885.8s delta=16.9s pair_freq=1004097 pair_to_word=1004097 affected_words=2770
+[bpe] vocab=5900 merges=5643 elapsed=4901.4s delta=15.6s pair_freq=1017329 pair_to_word=1017329 affected_words=40
+[bpe] vocab=6000 merges=5743 elapsed=4917.3s delta=15.9s pair_freq=1028789 pair_to_word=1028789 affected_words=7
+[bpe] vocab=6100 merges=5843 elapsed=4931.1s delta=13.8s pair_freq=1045819 pair_to_word=1045819 affected_words=13784
+[bpe] vocab=6200 merges=5943 elapsed=4945.0s delta=13.9s pair_freq=1057840 pair_to_word=1057840 affected_words=12
+[bpe] vocab=6300 merges=6043 elapsed=4956.0s delta=11.0s pair_freq=1065886 pair_to_word=1065886 affected_words=282
+[bpe] vocab=6400 merges=6143 elapsed=4980.7s delta=24.7s pair_freq=1080519 pair_to_word=1080519 affected_words=1433
+[bpe] vocab=6500 merges=6243 elapsed=4998.9s delta=18.2s pair_freq=1097484 pair_to_word=1097484 affected_words=45
+[bpe] vocab=6600 merges=6343 elapsed=5010.5s delta=11.6s pair_freq=1112469 pair_to_word=1112469 affected_words=607
+[bpe] vocab=6700 merges=6443 elapsed=5032.5s delta=22.0s pair_freq=1127028 pair_to_word=1127028 affected_words=22
+[bpe] vocab=6800 merges=6543 elapsed=5045.2s delta=12.7s pair_freq=1142457 pair_to_word=1142457 affected_words=54
+[bpe] vocab=6900 merges=6643 elapsed=5055.3s delta=10.1s pair_freq=1153747 pair_to_word=1153747 affected_words=546
+[bpe] vocab=7000 merges=6743 elapsed=5070.3s delta=15.0s pair_freq=1166502 pair_to_word=1166502 affected_words=8
+[bpe] vocab=7100 merges=6843 elapsed=5083.9s delta=13.6s pair_freq=1178928 pair_to_word=1178928 affected_words=7
+[bpe] vocab=7200 merges=6943 elapsed=5095.4s delta=11.6s pair_freq=1189352 pair_to_word=1189352 affected_words=16
+[bpe] vocab=7300 merges=7043 elapsed=5106.2s delta=10.8s pair_freq=1203876 pair_to_word=1203876 affected_words=74
+[bpe] vocab=7400 merges=7143 elapsed=5116.5s delta=10.3s pair_freq=1214981 pair_to_word=1214981 affected_words=129
+[bpe] vocab=7500 merges=7243 elapsed=5129.3s delta=12.8s pair_freq=1229125 pair_to_word=1229125 affected_words=27
+[bpe] vocab=7600 merges=7343 elapsed=5137.0s delta=7.7s pair_freq=1238480 pair_to_word=1238480 affected_words=383
+[bpe] vocab=7700 merges=7443 elapsed=5147.3s delta=10.3s pair_freq=1254415 pair_to_word=1254415 affected_words=9
+[bpe] vocab=7800 merges=7543 elapsed=5159.9s delta=12.5s pair_freq=1267761 pair_to_word=1267761 affected_words=19
+[bpe] vocab=7900 merges=7643 elapsed=5170.8s delta=11.0s pair_freq=1283947 pair_to_word=1283947 affected_words=72
+[bpe] vocab=8000 merges=7743 elapsed=5180.6s delta=9.7s pair_freq=1296283 pair_to_word=1296283 affected_words=3671
+[bpe] vocab=8100 merges=7843 elapsed=5206.2s delta=25.6s pair_freq=1311510 pair_to_word=1311510 affected_words=8147
+[bpe] vocab=8200 merges=7943 elapsed=5216.8s delta=10.6s pair_freq=1325865 pair_to_word=1325865 affected_words=544
+[bpe] vocab=8300 merges=8043 elapsed=5226.8s delta=10.0s pair_freq=1335156 pair_to_word=1335156 affected_words=820
+[bpe] vocab=8400 merges=8143 elapsed=5235.0s delta=8.2s pair_freq=1346444 pair_to_word=1346444 affected_words=51
+[bpe] vocab=8500 merges=8243 elapsed=5243.6s delta=8.6s pair_freq=1355311 pair_to_word=1355311 affected_words=751
+[bpe] vocab=8600 merges=8343 elapsed=5251.5s delta=7.9s pair_freq=1365389 pair_to_word=1365389 affected_words=336
+[bpe] vocab=8700 merges=8443 elapsed=5260.1s delta=8.6s pair_freq=1378035 pair_to_word=1378035 affected_words=3857
+[bpe] vocab=8800 merges=8543 elapsed=5268.4s delta=8.3s pair_freq=1387855 pair_to_word=1387855 affected_words=498
+[bpe] vocab=8900 merges=8643 elapsed=5276.0s delta=7.6s pair_freq=1397144 pair_to_word=1397144 affected_words=1138
+[bpe] vocab=9000 merges=8743 elapsed=5283.8s delta=7.8s pair_freq=1406402 pair_to_word=1406402 affected_words=66
+[bpe] vocab=9100 merges=8843 elapsed=5292.2s delta=8.4s pair_freq=1419746 pair_to_word=1419746 affected_words=36
+[bpe] vocab=9200 merges=8943 elapsed=5307.3s delta=15.1s pair_freq=1431155 pair_to_word=1431155 affected_words=5
+[bpe] vocab=9300 merges=9043 elapsed=5319.5s delta=12.2s pair_freq=1443085 pair_to_word=1443085 affected_words=1358
+[bpe] vocab=9400 merges=9143 elapsed=5335.1s delta=15.6s pair_freq=1455671 pair_to_word=1455671 affected_words=476
+[bpe] vocab=9500 merges=9243 elapsed=5350.5s delta=15.4s pair_freq=1466557 pair_to_word=1466557 affected_words=145
+[bpe] vocab=9600 merges=9343 elapsed=5361.7s delta=11.1s pair_freq=1476808 pair_to_word=1476808 affected_words=6
+[bpe] vocab=9700 merges=9443 elapsed=5371.7s delta=10.1s pair_freq=1489332 pair_to_word=1489332 affected_words=11
+[bpe] vocab=9800 merges=9543 elapsed=5385.4s delta=13.6s pair_freq=1503198 pair_to_word=1503198 affected_words=150
+[bpe] vocab=9900 merges=9643 elapsed=5396.2s delta=10.8s pair_freq=1515772 pair_to_word=1515772 affected_words=168
+[bpe] vocab=10000 merges=9743 elapsed=5405.5s delta=9.3s pair_freq=1529227 pair_to_word=1529227 affected_words=656
+[bpe] vocab=10100 merges=9843 elapsed=5412.5s delta=7.0s pair_freq=1539090 pair_to_word=1539090 affected_words=15
+[bpe] vocab=10200 merges=9943 elapsed=5421.6s delta=9.1s pair_freq=1548960 pair_to_word=1548960 affected_words=27
+[bpe] vocab=10300 merges=10043 elapsed=5429.8s delta=8.2s pair_freq=1560811 pair_to_word=1560811 affected_words=398
+[bpe] vocab=10400 merges=10143 elapsed=5437.2s delta=7.4s pair_freq=1570628 pair_to_word=1570628 affected_words=904
+[bpe] vocab=10500 merges=10243 elapsed=5459.9s delta=22.7s pair_freq=1583045 pair_to_word=1583045 affected_words=333
+[bpe] vocab=10600 merges=10343 elapsed=5470.6s delta=10.7s pair_freq=1597673 pair_to_word=1597673 affected_words=133
+[bpe] vocab=10700 merges=10443 elapsed=5478.4s delta=7.8s pair_freq=1607439 pair_to_word=1607439 affected_words=6
+[bpe] vocab=10800 merges=10543 elapsed=5486.1s delta=7.7s pair_freq=1620079 pair_to_word=1620079 affected_words=57
+[bpe] vocab=10900 merges=10643 elapsed=5494.7s delta=8.7s pair_freq=1629901 pair_to_word=1629901 affected_words=69
+[bpe] vocab=11000 merges=10743 elapsed=5501.0s delta=6.2s pair_freq=1643547 pair_to_word=1643547 affected_words=25
+[bpe] vocab=11100 merges=10843 elapsed=5506.6s delta=5.6s pair_freq=1654055 pair_to_word=1654055 affected_words=1140
+[bpe] vocab=11200 merges=10943 elapsed=5512.0s delta=5.5s pair_freq=1664591 pair_to_word=1664591 affected_words=66
+[bpe] vocab=11300 merges=11043 elapsed=5518.6s delta=6.6s pair_freq=1676931 pair_to_word=1676931 affected_words=103
+[bpe] vocab=11400 merges=11143 elapsed=5524.7s delta=6.1s pair_freq=1687393 pair_to_word=1687393 affected_words=1006
+[bpe] vocab=11500 merges=11243 elapsed=5531.1s delta=6.5s pair_freq=1696510 pair_to_word=1696510 affected_words=4
+[bpe] vocab=11600 merges=11343 elapsed=5537.2s delta=6.1s pair_freq=1706448 pair_to_word=1706448 affected_words=61
+[bpe] vocab=11700 merges=11443 elapsed=5544.2s delta=6.9s pair_freq=1720842 pair_to_word=1720842 affected_words=11
+[bpe] vocab=11800 merges=11543 elapsed=5549.8s delta=5.6s pair_freq=1730025 pair_to_word=1730025 affected_words=9
+[bpe] vocab=11900 merges=11643 elapsed=5555.4s delta=5.7s pair_freq=1738921 pair_to_word=1738921 affected_words=13
+[bpe] vocab=12000 merges=11743 elapsed=5560.1s delta=4.7s pair_freq=1748940 pair_to_word=1748940 affected_words=7
+[bpe] vocab=12100 merges=11843 elapsed=5565.2s delta=5.1s pair_freq=1756460 pair_to_word=1756460 affected_words=22
+[bpe] vocab=12200 merges=11943 elapsed=5571.9s delta=6.7s pair_freq=1769224 pair_to_word=1769224 affected_words=65
+[bpe] vocab=12300 merges=12043 elapsed=5578.4s delta=6.5s pair_freq=1781700 pair_to_word=1781700 affected_words=647
+[bpe] vocab=12400 merges=12143 elapsed=5585.0s delta=6.6s pair_freq=1796488 pair_to_word=1796488 affected_words=50
+[bpe] vocab=12500 merges=12243 elapsed=5590.5s delta=5.4s pair_freq=1805078 pair_to_word=1805078 affected_words=4
+[bpe] vocab=12600 merges=12343 elapsed=5596.0s delta=5.5s pair_freq=1813137 pair_to_word=1813137 affected_words=193
+[bpe] vocab=12700 merges=12443 elapsed=5603.0s delta=7.0s pair_freq=1821521 pair_to_word=1821521 affected_words=151
+[bpe] vocab=12800 merges=12543 elapsed=5611.9s delta=9.0s pair_freq=1830017 pair_to_word=1830017 affected_words=18
+[bpe] vocab=12900 merges=12643 elapsed=5617.3s delta=5.3s pair_freq=1837716 pair_to_word=1837716 affected_words=443
+[bpe] vocab=13000 merges=12743 elapsed=5623.0s delta=5.8s pair_freq=1851544 pair_to_word=1851544 affected_words=21
+[bpe] vocab=13100 merges=12843 elapsed=5629.4s delta=6.3s pair_freq=1863051 pair_to_word=1863051 affected_words=2086
+[bpe] vocab=13200 merges=12943 elapsed=5640.6s delta=11.2s pair_freq=1872063 pair_to_word=1872063 affected_words=6
+[bpe] vocab=13300 merges=13043 elapsed=5648.1s delta=7.5s pair_freq=1881254 pair_to_word=1881254 affected_words=43
+[bpe] vocab=13400 merges=13143 elapsed=5653.4s delta=5.2s pair_freq=1889145 pair_to_word=1889145 affected_words=19
+[bpe] vocab=13500 merges=13243 elapsed=5669.4s delta=16.0s pair_freq=1900314 pair_to_word=1900314 affected_words=5
+[bpe] vocab=13600 merges=13343 elapsed=5674.5s delta=5.2s pair_freq=1909997 pair_to_word=1909997 affected_words=35
+[bpe] vocab=13700 merges=13443 elapsed=5680.0s delta=5.5s pair_freq=1918161 pair_to_word=1918161 affected_words=289
+[bpe] vocab=13800 merges=13543 elapsed=5686.6s delta=6.6s pair_freq=1928698 pair_to_word=1928698 affected_words=16
+[bpe] vocab=13900 merges=13643 elapsed=5693.9s delta=7.3s pair_freq=1937951 pair_to_word=1937951 affected_words=23
+[bpe] vocab=14000 merges=13743 elapsed=5701.3s delta=7.4s pair_freq=1946811 pair_to_word=1946811 affected_words=82
+[bpe] vocab=14100 merges=13843 elapsed=5706.5s delta=5.2s pair_freq=1955806 pair_to_word=1955806 affected_words=9
+[bpe] vocab=14200 merges=13943 elapsed=5716.0s delta=9.5s pair_freq=1965495 pair_to_word=1965495 affected_words=6
+[bpe] vocab=14300 merges=14043 elapsed=5721.7s delta=5.7s pair_freq=1975803 pair_to_word=1975803 affected_words=20
+[bpe] vocab=14400 merges=14143 elapsed=5725.6s delta=3.9s pair_freq=1983932 pair_to_word=1983932 affected_words=575
+[bpe] vocab=14500 merges=14243 elapsed=5730.6s delta=5.0s pair_freq=1994044 pair_to_word=1994044 affected_words=384
+[bpe] vocab=14600 merges=14343 elapsed=5736.0s delta=5.4s pair_freq=2003874 pair_to_word=2003874 affected_words=262
+[bpe] vocab=14700 merges=14443 elapsed=5740.8s delta=4.9s pair_freq=2014415 pair_to_word=2014415 affected_words=184
+[bpe] vocab=14800 merges=14543 elapsed=5745.6s delta=4.8s pair_freq=2021984 pair_to_word=2021984 affected_words=45
+[bpe] vocab=14900 merges=14643 elapsed=5750.1s delta=4.5s pair_freq=2029836 pair_to_word=2029836 affected_words=21
+[bpe] vocab=15000 merges=14743 elapsed=5755.4s delta=5.3s pair_freq=2038525 pair_to_word=2038525 affected_words=2
+[bpe] vocab=15100 merges=14843 elapsed=5763.3s delta=8.0s pair_freq=2051000 pair_to_word=2051000 affected_words=39
+[bpe] vocab=15200 merges=14943 elapsed=5767.6s delta=4.3s pair_freq=2059387 pair_to_word=2059387 affected_words=5
+[bpe] vocab=15300 merges=15043 elapsed=5773.2s delta=5.6s pair_freq=2069924 pair_to_word=2069924 affected_words=53
+[bpe] vocab=15400 merges=15143 elapsed=5778.3s delta=5.1s pair_freq=2080026 pair_to_word=2080026 affected_words=23
+[bpe] vocab=15500 merges=15243 elapsed=5782.4s delta=4.1s pair_freq=2089240 pair_to_word=2089240 affected_words=429
+[bpe] vocab=15600 merges=15343 elapsed=5786.9s delta=4.5s pair_freq=2097817 pair_to_word=2097817 affected_words=14
+[bpe] vocab=15700 merges=15443 elapsed=5792.0s delta=5.1s pair_freq=2104769 pair_to_word=2104769 affected_words=167
+[bpe] vocab=15800 merges=15543 elapsed=5798.1s delta=6.1s pair_freq=2114292 pair_to_word=2114292 affected_words=85
+[bpe] vocab=15900 merges=15643 elapsed=5802.6s delta=4.5s pair_freq=2122378 pair_to_word=2122378 affected_words=101
+[bpe] vocab=16000 merges=15743 elapsed=5806.7s delta=4.1s pair_freq=2128761 pair_to_word=2128761 affected_words=60
+[bpe] vocab=16100 merges=15843 elapsed=5810.8s delta=4.1s pair_freq=2138163 pair_to_word=2138163 affected_words=221
+[bpe] vocab=16200 merges=15943 elapsed=5821.2s delta=10.4s pair_freq=2146960 pair_to_word=2146960 affected_words=17
+[bpe] vocab=16300 merges=16043 elapsed=5825.8s delta=4.5s pair_freq=2154533 pair_to_word=2154533 affected_words=1523
+[bpe] vocab=16400 merges=16143 elapsed=5830.0s delta=4.2s pair_freq=2164984 pair_to_word=2164984 affected_words=10
+[bpe] vocab=16500 merges=16243 elapsed=5834.2s delta=4.2s pair_freq=2175225 pair_to_word=2175225 affected_words=265
+[bpe] vocab=16600 merges=16343 elapsed=5838.3s delta=4.1s pair_freq=2183038 pair_to_word=2183038 affected_words=21
+[bpe] vocab=16700 merges=16443 elapsed=5843.3s delta=5.0s pair_freq=2191995 pair_to_word=2191995 affected_words=25
+[bpe] vocab=16800 merges=16543 elapsed=5849.6s delta=6.3s pair_freq=2202301 pair_to_word=2202301 affected_words=1
+[bpe] vocab=16900 merges=16643 elapsed=5853.7s delta=4.2s pair_freq=2209815 pair_to_word=2209815 affected_words=6
+[bpe] vocab=17000 merges=16743 elapsed=5858.4s delta=4.7s pair_freq=2217252 pair_to_word=2217252 affected_words=19
+[bpe] vocab=17100 merges=16843 elapsed=5863.2s delta=4.8s pair_freq=2224451 pair_to_word=2224451 affected_words=68
+[bpe] vocab=17200 merges=16943 elapsed=5869.0s delta=5.8s pair_freq=2232419 pair_to_word=2232419 affected_words=65
+[bpe] vocab=17300 merges=17043 elapsed=5872.7s delta=3.6s pair_freq=2239411 pair_to_word=2239411 affected_words=235
+[bpe] vocab=17400 merges=17143 elapsed=5877.6s delta=4.9s pair_freq=2249061 pair_to_word=2249061 affected_words=146
+[bpe] vocab=17500 merges=17243 elapsed=5893.5s delta=15.9s pair_freq=2258527 pair_to_word=2258527 affected_words=6
+[bpe] vocab=17600 merges=17343 elapsed=5898.1s delta=4.6s pair_freq=2266747 pair_to_word=2266747 affected_words=2
+[bpe] vocab=17700 merges=17443 elapsed=5902.7s delta=4.6s pair_freq=2276470 pair_to_word=2276470 affected_words=3
+[bpe] vocab=17800 merges=17543 elapsed=5908.0s delta=5.3s pair_freq=2284071 pair_to_word=2284071 affected_words=279
+[bpe] vocab=17900 merges=17643 elapsed=5911.4s delta=3.4s pair_freq=2291182 pair_to_word=2291182 affected_words=65
+[bpe] vocab=18000 merges=17743 elapsed=5916.5s delta=5.1s pair_freq=2299176 pair_to_word=2299176 affected_words=24
+[bpe] vocab=18100 merges=17843 elapsed=5920.2s delta=3.6s pair_freq=2304080 pair_to_word=2304080 affected_words=5
+[bpe] vocab=18200 merges=17943 elapsed=5925.2s delta=5.1s pair_freq=2314243 pair_to_word=2314243 affected_words=2
+[bpe] vocab=18300 merges=18043 elapsed=5929.2s delta=3.9s pair_freq=2321829 pair_to_word=2321829 affected_words=38
+[bpe] vocab=18400 merges=18143 elapsed=5936.3s delta=7.1s pair_freq=2329612 pair_to_word=2329612 affected_words=133
+[bpe] vocab=18500 merges=18243 elapsed=5939.2s delta=2.9s pair_freq=2335889 pair_to_word=2335889 affected_words=19
+[bpe] vocab=18600 merges=18343 elapsed=5942.7s delta=3.4s pair_freq=2343731 pair_to_word=2343731 affected_words=140
+[bpe] vocab=18700 merges=18443 elapsed=5946.2s delta=3.6s pair_freq=2351089 pair_to_word=2351089 affected_words=15
+[bpe] vocab=18800 merges=18543 elapsed=5951.2s delta=5.0s pair_freq=2358702 pair_to_word=2358702 affected_words=421
+[bpe] vocab=18900 merges=18643 elapsed=5955.4s delta=4.2s pair_freq=2366936 pair_to_word=2366936 affected_words=20
+[bpe] vocab=19000 merges=18743 elapsed=5965.3s delta=9.9s pair_freq=2375307 pair_to_word=2375307 affected_words=58
+[bpe] vocab=19100 merges=18843 elapsed=5976.1s delta=10.7s pair_freq=2385913 pair_to_word=2385913 affected_words=11897
+[bpe] vocab=19200 merges=18943 elapsed=5981.1s delta=5.0s pair_freq=2394313 pair_to_word=2394313 affected_words=5
+[bpe] vocab=19300 merges=19043 elapsed=5990.1s delta=9.0s pair_freq=2402913 pair_to_word=2402913 affected_words=1496
+[bpe] vocab=19400 merges=19143 elapsed=5993.5s delta=3.4s pair_freq=2409065 pair_to_word=2409065 affected_words=20
+[bpe] vocab=19500 merges=19243 elapsed=5996.1s delta=2.6s pair_freq=2415793 pair_to_word=2415793 affected_words=124
+[bpe] vocab=19600 merges=19343 elapsed=6000.1s delta=4.0s pair_freq=2421901 pair_to_word=2421901 affected_words=32
+[bpe] vocab=19700 merges=19443 elapsed=6007.3s delta=7.3s pair_freq=2429249 pair_to_word=2429249 affected_words=3
+[bpe] vocab=19800 merges=19543 elapsed=6015.5s delta=8.2s pair_freq=2435516 pair_to_word=2435516 affected_words=141
+[bpe] vocab=19900 merges=19643 elapsed=6024.0s delta=8.5s pair_freq=2442707 pair_to_word=2442707 affected_words=2
+[bpe] vocab=20000 merges=19743 elapsed=6027.5s delta=3.5s pair_freq=2452024 pair_to_word=2452024 affected_words=3
+[bpe] vocab=20100 merges=19843 elapsed=6035.3s delta=7.8s pair_freq=2458932 pair_to_word=2458932 affected_words=15
+[bpe] vocab=20200 merges=19943 elapsed=6039.2s delta=3.9s pair_freq=2467482 pair_to_word=2467482 affected_words=5
+[bpe] vocab=20300 merges=20043 elapsed=6047.4s delta=8.2s pair_freq=2475741 pair_to_word=2475741 affected_words=24
+[bpe] vocab=20400 merges=20143 elapsed=6050.4s delta=3.0s pair_freq=2480711 pair_to_word=2480711 affected_words=12
+[bpe] vocab=20500 merges=20243 elapsed=6055.0s delta=4.6s pair_freq=2486780 pair_to_word=2486780 affected_words=3
+[bpe] vocab=20600 merges=20343 elapsed=6063.0s delta=8.0s pair_freq=2492876 pair_to_word=2492876 affected_words=25
+[bpe] vocab=20700 merges=20443 elapsed=6067.8s delta=4.8s pair_freq=2499347 pair_to_word=2499347 affected_words=38
+[bpe] vocab=20800 merges=20543 elapsed=6075.8s delta=8.0s pair_freq=2506840 pair_to_word=2506840 affected_words=4
+[bpe] vocab=20900 merges=20643 elapsed=6080.2s delta=4.4s pair_freq=2515014 pair_to_word=2515014 affected_words=119
+[bpe] vocab=21000 merges=20743 elapsed=6084.9s delta=4.7s pair_freq=2523149 pair_to_word=2523149 affected_words=214
+[bpe] vocab=21100 merges=20843 elapsed=6088.2s delta=3.2s pair_freq=2530702 pair_to_word=2530702 affected_words=114
+[bpe] vocab=21200 merges=20943 elapsed=6093.0s delta=4.8s pair_freq=2538083 pair_to_word=2538083 affected_words=22
+[bpe] vocab=21300 merges=21043 elapsed=6096.7s delta=3.7s pair_freq=2543024 pair_to_word=2543024 affected_words=1
+[bpe] vocab=21400 merges=21143 elapsed=6102.4s delta=5.8s pair_freq=2549206 pair_to_word=2549206 affected_words=60
+[bpe] vocab=21500 merges=21243 elapsed=6106.8s delta=4.4s pair_freq=2556264 pair_to_word=2556264 affected_words=301
+[bpe] vocab=21600 merges=21343 elapsed=6111.2s delta=4.3s pair_freq=2563453 pair_to_word=2563453 affected_words=21
+[bpe] vocab=21700 merges=21443 elapsed=6115.0s delta=3.9s pair_freq=2574009 pair_to_word=2574009 affected_words=1059
+[bpe] vocab=21800 merges=21543 elapsed=6119.0s delta=4.0s pair_freq=2581365 pair_to_word=2581365 affected_words=203
+[bpe] vocab=21900 merges=21643 elapsed=6122.3s delta=3.2s pair_freq=2589546 pair_to_word=2589546 affected_words=4
+[bpe] vocab=22000 merges=21743 elapsed=6126.2s delta=3.9s pair_freq=2600807 pair_to_word=2600807 affected_words=20
+[bpe] vocab=22100 merges=21843 elapsed=6133.5s delta=7.4s pair_freq=2608415 pair_to_word=2608415 affected_words=85
+[bpe] vocab=22200 merges=21943 elapsed=6137.2s delta=3.7s pair_freq=2613278 pair_to_word=2613278 affected_words=1
+[bpe] vocab=22300 merges=22043 elapsed=6143.9s delta=6.8s pair_freq=2618289 pair_to_word=2618289 affected_words=1
+[bpe] vocab=22400 merges=22143 elapsed=6147.4s delta=3.5s pair_freq=2627196 pair_to_word=2627196 affected_words=32
+[bpe] vocab=22500 merges=22243 elapsed=6150.0s delta=2.6s pair_freq=2632696 pair_to_word=2632696 affected_words=1
+[bpe] vocab=22600 merges=22343 elapsed=6153.9s delta=3.9s pair_freq=2639904 pair_to_word=2639904 affected_words=5
+[bpe] vocab=22700 merges=22443 elapsed=6156.3s delta=2.4s pair_freq=2646316 pair_to_word=2646316 affected_words=4
+[bpe] vocab=22800 merges=22543 elapsed=6159.2s delta=2.9s pair_freq=2651575 pair_to_word=2651575 affected_words=25
+[bpe] vocab=22900 merges=22643 elapsed=6163.9s delta=4.7s pair_freq=2660452 pair_to_word=2660452 affected_words=16
+[bpe] vocab=23000 merges=22743 elapsed=6185.2s delta=21.3s pair_freq=2667780 pair_to_word=2667780 affected_words=108
+[bpe] vocab=23100 merges=22843 elapsed=6190.4s delta=5.2s pair_freq=2674737 pair_to_word=2674737 affected_words=15
+[bpe] vocab=23200 merges=22943 elapsed=6193.9s delta=3.5s pair_freq=2681964 pair_to_word=2681964 affected_words=86
+[bpe] vocab=23300 merges=23043 elapsed=6197.6s delta=3.6s pair_freq=2687715 pair_to_word=2687715 affected_words=5
+[bpe] vocab=23400 merges=23143 elapsed=6201.1s delta=3.6s pair_freq=2693742 pair_to_word=2693742 affected_words=1
+[bpe] vocab=23500 merges=23243 elapsed=6206.1s delta=5.0s pair_freq=2700279 pair_to_word=2700279 affected_words=8
+[bpe] vocab=23600 merges=23343 elapsed=6212.6s delta=6.5s pair_freq=2707089 pair_to_word=2707089 affected_words=4
+[bpe] vocab=23700 merges=23443 elapsed=6216.0s delta=3.4s pair_freq=2713642 pair_to_word=2713642 affected_words=40
+[bpe] vocab=23800 merges=23543 elapsed=6219.1s delta=3.1s pair_freq=2721868 pair_to_word=2721868 affected_words=1
+[bpe] vocab=23900 merges=23643 elapsed=6222.1s delta=3.0s pair_freq=2727157 pair_to_word=2727157 affected_words=39
+[bpe] vocab=24000 merges=23743 elapsed=6228.0s delta=5.9s pair_freq=2735080 pair_to_word=2735080 affected_words=18
+[bpe] vocab=24100 merges=23843 elapsed=6232.9s delta=4.9s pair_freq=2741419 pair_to_word=2741419 affected_words=5
+[bpe] vocab=24200 merges=23943 elapsed=6237.2s delta=4.3s pair_freq=2747259 pair_to_word=2747259 affected_words=86
+[bpe] vocab=24300 merges=24043 elapsed=6239.3s delta=2.1s pair_freq=2752868 pair_to_word=2752868 affected_words=12
+[bpe] vocab=24400 merges=24143 elapsed=6242.3s delta=3.0s pair_freq=2758883 pair_to_word=2758883 affected_words=421
+[bpe] vocab=24500 merges=24243 elapsed=6245.7s delta=3.4s pair_freq=2765405 pair_to_word=2765405 affected_words=224
+[bpe] vocab=24600 merges=24343 elapsed=6250.0s delta=4.3s pair_freq=2773706 pair_to_word=2773706 affected_words=10
+[bpe] vocab=24700 merges=24443 elapsed=6256.1s delta=6.1s pair_freq=2783241 pair_to_word=2783241 affected_words=37
+[bpe] vocab=24800 merges=24543 elapsed=6263.2s delta=7.1s pair_freq=2789130 pair_to_word=2789130 affected_words=21
+[bpe] vocab=24900 merges=24643 elapsed=6266.4s delta=3.3s pair_freq=2796448 pair_to_word=2796448 affected_words=116
+[bpe] vocab=25000 merges=24743 elapsed=6272.9s delta=6.5s pair_freq=2802989 pair_to_word=2802989 affected_words=18
+[bpe] vocab=25100 merges=24843 elapsed=6277.8s delta=4.8s pair_freq=2808441 pair_to_word=2808441 affected_words=4
+[bpe] vocab=25200 merges=24943 elapsed=6284.3s delta=6.5s pair_freq=2814679 pair_to_word=2814679 affected_words=3
+[bpe] vocab=25300 merges=25043 elapsed=6287.2s delta=2.9s pair_freq=2820886 pair_to_word=2820886 affected_words=4
+[bpe] vocab=25400 merges=25143 elapsed=6289.6s delta=2.4s pair_freq=2826569 pair_to_word=2826569 affected_words=15
+[bpe] vocab=25500 merges=25243 elapsed=6292.7s delta=3.1s pair_freq=2832213 pair_to_word=2832213 affected_words=19
+[bpe] vocab=25600 merges=25343 elapsed=6297.7s delta=5.0s pair_freq=2838163 pair_to_word=2838163 affected_words=18
+[bpe] vocab=25700 merges=25443 elapsed=6300.8s delta=3.1s pair_freq=2844285 pair_to_word=2844285 affected_words=16
+[bpe] vocab=25800 merges=25543 elapsed=6304.7s delta=3.9s pair_freq=2850296 pair_to_word=2850296 affected_words=355
+[bpe] vocab=25900 merges=25643 elapsed=6307.9s delta=3.3s pair_freq=2856636 pair_to_word=2856636 affected_words=8
+[bpe] vocab=26000 merges=25743 elapsed=6310.9s delta=2.9s pair_freq=2862144 pair_to_word=2862144 affected_words=10
+[bpe] vocab=26100 merges=25843 elapsed=6314.5s delta=3.7s pair_freq=2868878 pair_to_word=2868878 affected_words=142
+[bpe] vocab=26200 merges=25943 elapsed=6322.4s delta=7.9s pair_freq=2875400 pair_to_word=2875400 affected_words=88
+[bpe] vocab=26300 merges=26043 elapsed=6327.6s delta=5.2s pair_freq=2882503 pair_to_word=2882503 affected_words=1
+[bpe] vocab=26400 merges=26143 elapsed=6333.0s delta=5.4s pair_freq=2888364 pair_to_word=2888364 affected_words=9
+[bpe] vocab=26500 merges=26243 elapsed=6335.6s delta=2.5s pair_freq=2894092 pair_to_word=2894092 affected_words=86
+[bpe] vocab=26600 merges=26343 elapsed=6337.9s delta=2.4s pair_freq=2898494 pair_to_word=2898494 affected_words=1
+[bpe] vocab=26700 merges=26443 elapsed=6340.9s delta=3.0s pair_freq=2904868 pair_to_word=2904868 affected_words=101
+[bpe] vocab=26800 merges=26543 elapsed=6346.3s delta=5.4s pair_freq=2911516 pair_to_word=2911516 affected_words=183
+[bpe] vocab=26900 merges=26643 elapsed=6349.3s delta=3.0s pair_freq=2916786 pair_to_word=2916786 affected_words=5
+[bpe] vocab=27000 merges=26743 elapsed=6353.2s delta=3.9s pair_freq=2922456 pair_to_word=2922456 affected_words=19
+[bpe] vocab=27100 merges=26843 elapsed=6359.6s delta=6.4s pair_freq=2929030 pair_to_word=2929030 affected_words=2
+[bpe] vocab=27200 merges=26943 elapsed=6362.3s delta=2.6s pair_freq=2934799 pair_to_word=2934799 affected_words=8
+[bpe] vocab=27300 merges=27043 elapsed=6364.9s delta=2.6s pair_freq=2940251 pair_to_word=2940251 affected_words=131
+[bpe] vocab=27400 merges=27143 elapsed=6367.6s delta=2.7s pair_freq=2945422 pair_to_word=2945422 affected_words=15
+[bpe] vocab=27500 merges=27243 elapsed=6369.9s delta=2.4s pair_freq=2949896 pair_to_word=2949896 affected_words=56
+[bpe] vocab=27600 merges=27343 elapsed=6373.4s delta=3.4s pair_freq=2955763 pair_to_word=2955763 affected_words=4
+[bpe] vocab=27700 merges=27443 elapsed=6378.7s delta=5.3s pair_freq=2961814 pair_to_word=2961814 affected_words=18
+[bpe] vocab=27800 merges=27543 elapsed=6381.8s delta=3.1s pair_freq=2966559 pair_to_word=2966559 affected_words=6
+[bpe] vocab=27900 merges=27643 elapsed=6384.6s delta=2.8s pair_freq=2972299 pair_to_word=2972299 affected_words=204
+[bpe] vocab=28000 merges=27743 elapsed=6387.6s delta=3.0s pair_freq=2979359 pair_to_word=2979359 affected_words=1763
+[bpe] vocab=28100 merges=27843 elapsed=6390.3s delta=2.7s pair_freq=2984064 pair_to_word=2984064 affected_words=8
+[bpe] vocab=28200 merges=27943 elapsed=6396.5s delta=6.2s pair_freq=2990546 pair_to_word=2990546 affected_words=1
+[bpe] vocab=28300 merges=28043 elapsed=6399.8s delta=3.4s pair_freq=2995659 pair_to_word=2995659 affected_words=10
+[bpe] vocab=28400 merges=28143 elapsed=6402.8s delta=2.9s pair_freq=3001151 pair_to_word=3001151 affected_words=1
+[bpe] vocab=28500 merges=28243 elapsed=6405.5s delta=2.7s pair_freq=3005500 pair_to_word=3005500 affected_words=208
+[bpe] vocab=28600 merges=28343 elapsed=6408.5s delta=3.1s pair_freq=3011394 pair_to_word=3011394 affected_words=23
+[bpe] vocab=28700 merges=28443 elapsed=6411.2s delta=2.6s pair_freq=3016877 pair_to_word=3016877 affected_words=3
+[bpe] vocab=28800 merges=28543 elapsed=6414.0s delta=2.8s pair_freq=3021905 pair_to_word=3021905 affected_words=502
+[bpe] vocab=28900 merges=28643 elapsed=6416.6s delta=2.6s pair_freq=3028205 pair_to_word=3028205 affected_words=33
+[bpe] vocab=29000 merges=28743 elapsed=6420.1s delta=3.5s pair_freq=3033051 pair_to_word=3033051 affected_words=19
+[bpe] vocab=29100 merges=28843 elapsed=6422.5s delta=2.4s pair_freq=3038649 pair_to_word=3038649 affected_words=1
+[bpe] vocab=29200 merges=28943 elapsed=6426.3s delta=3.9s pair_freq=3046367 pair_to_word=3046367 affected_words=2
+[bpe] vocab=29300 merges=29043 elapsed=6428.9s delta=2.6s pair_freq=3052484 pair_to_word=3052484 affected_words=6
+[bpe] vocab=29400 merges=29143 elapsed=6432.4s delta=3.5s pair_freq=3057267 pair_to_word=3057267 affected_words=2
+[bpe] vocab=29500 merges=29243 elapsed=6436.2s delta=3.8s pair_freq=3063694 pair_to_word=3063694 affected_words=2
+[bpe] vocab=29600 merges=29343 elapsed=6439.5s delta=3.3s pair_freq=3069026 pair_to_word=3069026 affected_words=443
+[bpe] vocab=29700 merges=29443 elapsed=6442.0s delta=2.5s pair_freq=3074273 pair_to_word=3074273 affected_words=11
+[bpe] vocab=29800 merges=29543 elapsed=6444.7s delta=2.8s pair_freq=3079459 pair_to_word=3079459 affected_words=5
+[bpe] vocab=29900 merges=29643 elapsed=6447.7s delta=3.0s pair_freq=3084261 pair_to_word=3084261 affected_words=84
+[bpe] vocab=30000 merges=29743 elapsed=6450.9s delta=3.2s pair_freq=3088097 pair_to_word=3088097 affected_words=3
+[bpe] vocab=30100 merges=29843 elapsed=6455.9s delta=5.0s pair_freq=3093164 pair_to_word=3093164 affected_words=2
+[bpe] vocab=30200 merges=29943 elapsed=6462.7s delta=6.8s pair_freq=3097854 pair_to_word=3097854 affected_words=517
+[bpe] vocab=30300 merges=30043 elapsed=6468.1s delta=5.4s pair_freq=3102283 pair_to_word=3102283 affected_words=9
+[bpe] vocab=30400 merges=30143 elapsed=6472.9s delta=4.8s pair_freq=3106815 pair_to_word=3106815 affected_words=91
+[bpe] vocab=30500 merges=30243 elapsed=6477.2s delta=4.2s pair_freq=3112246 pair_to_word=3112246 affected_words=93
+[bpe] vocab=30600 merges=30343 elapsed=6481.7s delta=4.5s pair_freq=3118179 pair_to_word=3118179 affected_words=4
+[bpe] vocab=30700 merges=30443 elapsed=6485.9s delta=4.2s pair_freq=3123420 pair_to_word=3123420 affected_words=16
+[bpe] vocab=30800 merges=30543 elapsed=6490.6s delta=4.7s pair_freq=3127069 pair_to_word=3127069 affected_words=1
+[bpe] vocab=30900 merges=30643 elapsed=6523.0s delta=32.4s pair_freq=3134656 pair_to_word=3134656 affected_words=3
+[bpe] vocab=31000 merges=30743 elapsed=6530.9s delta=7.9s pair_freq=3138408 pair_to_word=3138408 affected_words=385
+[bpe] vocab=31100 merges=30843 elapsed=6539.1s delta=8.2s pair_freq=3143880 pair_to_word=3143880 affected_words=385
+[bpe] vocab=31200 merges=30943 elapsed=6545.6s delta=6.5s pair_freq=3148485 pair_to_word=3148485 affected_words=3
+[bpe] vocab=31300 merges=31043 elapsed=6549.5s delta=3.9s pair_freq=3153640 pair_to_word=3153640 affected_words=159
+[bpe] vocab=31400 merges=31143 elapsed=6555.2s delta=5.6s pair_freq=3159025 pair_to_word=3159025 affected_words=5
+[bpe] vocab=31500 merges=31243 elapsed=6559.1s delta=3.9s pair_freq=3164805 pair_to_word=3164805 affected_words=35
+[bpe] vocab=31600 merges=31343 elapsed=6563.5s delta=4.4s pair_freq=3170614 pair_to_word=3170614 affected_words=2
+[bpe] vocab=31700 merges=31443 elapsed=6566.0s delta=2.6s pair_freq=3174709 pair_to_word=3174709 affected_words=160
+[bpe] vocab=31800 merges=31543 elapsed=6569.8s delta=3.8s pair_freq=3180970 pair_to_word=3180970 affected_words=2
+[bpe] vocab=31900 merges=31643 elapsed=6574.8s delta=5.0s pair_freq=3185433 pair_to_word=3185433 affected_words=3
+[bpe] vocab=32000 merges=31743 elapsed=6577.4s delta=2.6s pair_freq=3189962 pair_to_word=3189962 affected_words=434
+
+Elapsed time: 7125.432709 seconds
+Longest token: id=25822 len=64 token='Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82'
+Platform: linux, ru_maxrss: 25528168
+Peak RSS: 24.346 GB
+         4826439213 function calls (4826439034 primitive calls) in 7062.718 seconds
+
+   Ordered by: cumulative time
+   List reduced from 559 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1   94.881   94.881 7062.504 7062.504 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:113(train_byte_level_bpe_incremental)
+    31743  294.814    0.009 3741.363    0.118 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:486(_heap_pop_best_pair_max_lazy)
+386243511 3348.529    0.000 3348.529    0.000 {built-in method _heapq.heappop}
+ 36031452 1387.265    0.000 2740.751    0.000 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:213(_update_one_word)
+       10    0.003    0.000  728.889   72.889 /root/miniconda3/lib/python3.12/concurrent/futures/process.py:415(wait_result_broken_or_wakeup)
+499821357  354.056    0.000  676.224    0.000 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:475(_heap_push_max_lazy)
+1722340976  477.636    0.000  477.636    0.000 {method 'get' of 'dict' objects}
+        1    0.000    0.000  376.700  376.700 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:319(_build_word_freq)
+        1    0.000    0.000  376.698  376.698 /root/miniconda3/lib/python3.12/concurrent/futures/_base.py:646(__exit__)
+        1    0.000    0.000  376.698  376.698 /root/miniconda3/lib/python3.12/concurrent/futures/process.py:864(shutdown)
+      2/1    0.000    0.000  376.689  376.689 /root/miniconda3/lib/python3.12/threading.py:1115(join)
+      2/1    0.000    0.000  376.689  376.689 /root/miniconda3/lib/python3.12/threading.py:1153(_wait_for_tstate_lock)
+     65/4    0.001    0.000  376.689   94.172 {method 'acquire' of '_thread.lock' objects}
+      2/1    0.000    0.000  376.689  376.689 /root/miniconda3/lib/python3.12/threading.py:1016(_bootstrap)
+      2/1    0.000    0.000  376.689  376.689 /root/miniconda3/lib/python3.12/threading.py:1056(_bootstrap_inner)
+        1    0.000    0.000  376.689  376.689 /root/miniconda3/lib/python3.12/concurrent/futures/process.py:340(run)
+        1    0.000    0.000  376.688  376.688 /root/miniconda3/lib/python3.12/concurrent/futures/process.py:574(join_executor_internals)
+        1    0.000    0.000  376.688  376.688 /root/miniconda3/lib/python3.12/concurrent/futures/process.py:578(_join_executor_internals)
+        8    0.004    0.001  372.060   46.507 /root/miniconda3/lib/python3.12/multiprocessing/connection.py:246(recv)
+       29    0.001    0.000  356.758   12.302 /root/miniconda3/lib/python3.12/multiprocessing/connection.py:1122(wait)
+       29    0.000    0.000  356.753   12.302 /root/miniconda3/lib/python3.12/selectors.py:402(select)
+       29  356.753   12.302  356.753   12.302 {method 'poll' of 'select.poll' objects}
+499409473  218.766    0.000  218.766    0.000 {built-in method _heapq.heappush}
+822672602  193.215    0.000  193.215    0.000 {method 'add' of 'set' objects}
+260552970  112.152    0.000  112.152    0.000 {method 'discard' of 'set' objects}
+        1   54.868   54.868   94.859   94.859 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:272(_init_pair_freq_and_pair_to_word)
+225275023   69.837    0.000   69.837    0.000 {method 'setdefault' of 'dict' objects}
+286206396   63.624    0.000   63.624    0.000 {method 'append' of 'list' objects}
+ 78765042   12.432    0.000   12.432    0.000 {built-in method builtins.len}
+        1    7.219    7.219   11.189   11.189 /root/autodl-tmp/cs336-assignment1/cs336_basics/train_bpe.py:372(_init_symbol_vocab_and_words)

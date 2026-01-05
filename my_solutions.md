@@ -46,9 +46,42 @@ version 2: using heap to select best pair
 (a) It takes me 42.39 seconds and 0.219G memory to train BPE on tinystores. The longest token in the vocab is `' accomplishment'`, which make sense.  
 (b) The step `_build_word_freq` function takes the most time, which is 30 seconds. 
 
+#### Problem (train_bpe_expts_owt): BPE Training on OpenWebText
+(a) It takes me 7125 seconds and 24.346 G memory to train BPE, the logs during training can be found at [here](logs/train_bpe_owt_log.txt). The longest token in the vocab is `'Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82Ã\x83Ã\x82'`, and this does make sense for a byte-level BPE tokenizer.
 
+This token is not meant to represent a readable character or word. It is a high-frequency byte sequence that appears repeatedly in the training corpus. The pattern `Ã\x83Ã\x82` corresponds to a specific UTF-8 byte sequence that commonly arises from misinterpreted or re-encoded UTF-8 text (often called mojibake).
 
+(b) By running this [scripts](scripts/compare_vocabs.py), we can conclude their key differences are:
+``` txt
+== TinyStories ==
+vocab size: 10000
+max token length: 15
+ASCII-only ratio: 0.9852
+longest tokens:
+  b' accomplishment'
+  b' disappointment'
+  b' responsibility'
+  b' uncomfortable'
+  b' compassionate'
 
+== OpenWebText ==
+vocab size: 32000
+max token length: 128
+ASCII-only ratio: 0.98253125
+longest tokens:
+  b'\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83'
+  b'\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94'
+  b'\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83\xc3\x83\xc2\x82\xc3\x83\xc2\x83'
+  b'------------------------------------------------------------'
+  b'\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94\xc3\xa2\xc2\x80\xc2\x94'
+
+== Overlap ==
+shared tokens: 7319
+only TinyStories: 2681
+only OpenWebText: 24681
+```
+ - The TinyStories tokenizer learns mostly short, human-readable English word and subword tokens, reflecting the clean, simple, and homogeneous nature of the corpus. 
+ - The OpenWebText tokenizer learns a much larger and more diverse vocabulary, including very long byte-level tokens and noisy UTF-8 artifacts, capturing the heterogeneous, messy, and web-scale characteristics of internet text.
 
 ## Notes
 
