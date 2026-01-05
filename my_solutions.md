@@ -50,9 +50,12 @@ version 2: using heap to select best pair
 (a) It takes me 7125 seconds and 24.346 G memory to train BPE, the logs during training can be found at [here](logs/train_bpe_owt_log.txt).   
 <div style="display:flex; gap:20px;">
   <div>
+
 ![vocab size vs time](logs/train_bpe_owt_figure_speed.jpeg)
+
   </div>
   <div>
+  
 ![vocab size vs pair size](logs/train_bpe_owt_figure_vocab_vs_pair.jpeg)
 
   </div>
