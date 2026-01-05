@@ -25,7 +25,7 @@ def main() -> None:
     start = time.perf_counter()
     vocab, merges = train_byte_level_bpe_incremental(
         input_path=str(repo_root / "data" / "owt_train.txt"),
-        vocab_size=320000,
+        vocab_size=32000,
         special_tokens=["<|endoftext|>"],
         parallel=cfg
     )
