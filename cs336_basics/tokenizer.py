@@ -2,6 +2,7 @@ import regex as re
 import json
 from typing import Iterable, Iterator, Self
 from .pretokenize import compile_special_pattern, split_by_special_tokens
+from .gpt2_bytes import gpt2_str_to_bytes
 
 
 class Tokenizer(object):
@@ -82,37 +83,21 @@ class Tokenizer(object):
                             f"bad merges line {line_no} (control char): {line!r}"
                         )
 
-                def _parse_candidates(src: str, *, decode_escapes: bool) -> list[tuple[bytes, bytes]]:
-                    candidates: list[tuple[bytes, bytes]] = []
-                    for i, ch in enumerate(src):
-                        if ch != " ":
-                            continue
-                        a = src[:i]
-                        b = src[i + 1 :]
-                        if b == "":
-                            continue
-                        if decode_escapes:
-                            try:
-                                a = a.encode("ascii").decode("unicode_escape")
-                                b = b.encode("ascii").decode("unicode_escape")
-                            except (UnicodeEncodeError, UnicodeDecodeError):
-                                continue
-                        a_bytes = cls._token_str_to_bytes(a)
-                        b_bytes = cls._token_str_to_bytes(b)
-                        if a_bytes in vocab_bytes and b_bytes in vocab_bytes:
-                            candidates.append((a_bytes, b_bytes))
-                    return candidates
-
-                raw_candidates = _parse_candidates(line, decode_escapes=False)
-                esc_candidates = _parse_candidates(line, decode_escapes=True)
-                unique = {(a, b) for a, b in (raw_candidates + esc_candidates)}
-
-                if len(unique) == 1:
-                    merges.append(next(iter(unique)))
-                elif len(unique) == 0:
+                if line.count(" ") != 1:
                     raise ValueError(f"bad merges line {line_no}: {line!r}")
-                else:
-                    raise ValueError(f"ambiguous merges line {line_no}: {line!r}")
+
+                a, b = line.split(" ", 1)
+                if b == "":
+                    raise ValueError(
+                        f"bad merges line {line_no} (empty second token): {line!r}"
+                    )
+
+                a_bytes = cls._token_str_to_bytes(a)
+                b_bytes = cls._token_str_to_bytes(b)
+                if a_bytes not in vocab_bytes or b_bytes not in vocab_bytes:
+                    raise ValueError(f"bad merges line {line_no}: {line!r}")
+
+                merges.append((a_bytes, b_bytes))
 
         return cls(vocab=vocab, merges=merges, special_tokens=special_tokens)
 
@@ -148,10 +133,7 @@ class Tokenizer(object):
     
     @staticmethod
     def _token_str_to_bytes(tok: str) -> bytes:
-        try:
-            return tok.encode("latin-1")
-        except UnicodeEncodeError:
-            return tok.encode("utf-8")
+        return gpt2_str_to_bytes(tok)
         
     def _bpe(self, bs: bytes) -> list[bytes]:
         """

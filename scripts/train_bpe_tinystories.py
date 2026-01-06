@@ -7,19 +7,14 @@ import json
 import sys
 
 from cs336_basics.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
+from cs336_basics.gpt2_bytes import bytes_to_gpt2_str
 from scripts.bpe_verify import verify_tokenizer_roundtrip
 
 def _bytes_to_str(b: bytes) -> str:
     """
-    •	Latin-1 和 UTF-8 是不同体系
-	•	ASCII 区间它们碰巧一致
-	•	UTF-8 会“扩展字节”，Latin-1 永不扩展
-	•	tokenizer 的 vocab/merges 必须用 Latin-1 才能保持 byte-level 语义
+    GPT-2 byte-to-unicode mapping for readable, reversible serialization.
     """
-    return b.decode("latin-1")
-
-def _bytes_to_escaped_str(b: bytes) -> str:
-    return b.decode("latin-1").encode("unicode_escape").decode("ascii")
+    return bytes_to_gpt2_str(b)
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
@@ -57,7 +52,7 @@ def main() -> None:
 
     with open(output_dir / "tinystories_merges.txt", "w", encoding="utf-8") as f:
         for a, b in merges:
-            f.write(f"{_bytes_to_escaped_str(a)} {_bytes_to_escaped_str(b)}\n")
+            f.write(f"{_bytes_to_str(a)} {_bytes_to_str(b)}\n")
 
     verify_tokenizer_roundtrip(
         vocab=vocab,

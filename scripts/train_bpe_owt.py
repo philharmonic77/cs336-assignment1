@@ -7,13 +7,11 @@ import json
 import sys
 
 from cs336_basics.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
+from cs336_basics.gpt2_bytes import bytes_to_gpt2_str
 from scripts.bpe_verify import verify_tokenizer_roundtrip
 
 def _bytes_to_str(b: bytes) -> str:
-    return b.decode("latin-1")
-
-def _bytes_to_escaped_str(b: bytes) -> str:
-    return b.decode("latin-1").encode("unicode_escape").decode("ascii")
+    return bytes_to_gpt2_str(b)
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
@@ -51,7 +49,7 @@ def main() -> None:
 
     with open(output_dir / "owt_merges.txt", "w", encoding="utf-8") as f:
         for a, b in merges:
-            f.write(f"{_bytes_to_escaped_str(a)} {_bytes_to_escaped_str(b)}\n")
+            f.write(f"{_bytes_to_str(a)} {_bytes_to_str(b)}\n")
 
     verify_tokenizer_roundtrip(
         vocab=vocab,
