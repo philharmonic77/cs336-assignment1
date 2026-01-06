@@ -100,6 +100,27 @@ only OpenWebText: 24681
  - The TinyStories tokenizer learns mostly short, human-readable English word and subword tokens, reflecting the clean, simple, and homogeneous nature of the corpus. 
  - The OpenWebText tokenizer learns a much larger and more diverse vocabulary, including very long byte-level tokens and noisy UTF-8 artifacts, capturing the heterogeneous, messy, and web-scale characteristics of internet text.
 
+#### Problem (tokenizer_experiments): Experiments with tokenizers
+Below are the outputs produced by from this [scripts](scripts/tokenizer_experiments.py).
+```
+================ problem (a) ================
+TS data + TS tok: total_bytes: 9170, total_tokens: 2225 => compression_ratio: 4.1213 bytes/token
+OWT data + OWT tok: total_bytes: 23892, total_tokens: 5335 => compression_ratio: 4.4784 bytes/token
+================ problem (b) ================
+OWT data + TS tok: total_bytes: 23892, total_tokens: 7577 => compression_ratio: 3.1532 bytes/token
+TS data + OWT tok total_bytes: 9170, total_tokens: 2286 => compression_ratio: 4.0114 bytes/token
+================ problem (c) ================
+OWT tokenizer throughput: 3.91 MB/s
+Estimated time for 825GB: 58.60 hours (2.44 days)
+(optional) tokens/sec: 0.90 M tokens/s
+```
+(a) On 10 sampled documents, the TinyStories tokenizer achieves 4.1213 bytes/token on TinyStories and the OpenWebText tokenizer achieves 4.4784 bytes/token on OpenWebText.
+
+(b) Tokenizing the OpenWebText sample with the TinyStories tokenizer yields a substantially worse compression ratio (3.1532 bytes/token vs 4.4784 bytes/token), indicating the smaller, domain-specific TinyStories vocabulary splits OpenWebText text into many more (shorter) tokens.
+
+(c) The OpenWebText tokenizer runs at about 3.91 MB/s, so tokenizing the 825GB Pile would take approximately 58.6 hours (~2.44 days).
+
+(d) uint16 is appropriate because it can represent token IDs in the range 0–65535, which safely covers vocabularies of 10K and 32K, while halving storage and I/O cost relative to int32.
 
 ## Notes
 
