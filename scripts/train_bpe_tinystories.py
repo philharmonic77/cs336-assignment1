@@ -17,6 +17,9 @@ def _bytes_to_str(b: bytes) -> str:
     """
     return b.decode("latin-1")
 
+def _bytes_to_escaped_str(b: bytes) -> str:
+    return b.decode("latin-1").encode("unicode_escape").decode("ascii")
+
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
     cfg = ParallelConfig(
@@ -53,7 +56,7 @@ def main() -> None:
 
     with open(output_dir / "tinystories_merges.txt", "w", encoding="utf-8") as f:
         for a, b in merges:
-            f.write(f"{_bytes_to_str(a)} {_bytes_to_str(b)}\n")
+            f.write(f"{_bytes_to_escaped_str(a)} {_bytes_to_escaped_str(b)}\n")
 
     peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     print(f"Platform: {sys.platform}, ru_maxrss: {peak}")

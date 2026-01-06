@@ -438,7 +438,7 @@ au se
  ex c
 ur p
 way s
-â 
+\xe2 \x80
  out side
  laug hed
  loo k
@@ -612,9 +612,7 @@ or t
 r m
 b er
  e nd
-
- 
-
+\n \n
  The n
 op le
  e ven
@@ -838,11 +836,11 @@ ir ed
 ill y
  he ar
  u se
-â 
+\xe2\x80 \x9d
 H i
  p a
  ke pt
-â 
+\xe2\x80 \x9c
 Th at
  squ irrel
 e ar
@@ -943,7 +941,7 @@ j oy
  sw e
 i ous
  sa nd
-  â
+  \xe2\x80\x9c
 a c
 or n
  r ace
@@ -1059,7 +1057,7 @@ ar ing
  laug h
  d el
  pie ce
-â 
+\xe2\x80 \x99
 er ed
  M r
  ro ll
@@ -1572,9 +1570,9 @@ g g
  hig her
  s itting
  tre asure
-. â
+. \xe2\x80\x9d
  sm o
-! â
+! \xe2\x80\x9d
  danger ous
  lon ely
  C h
@@ -1775,8 +1773,7 @@ ll a
  in c
 um b
 b r
-
-  
+\n  
  bug s
 il k
  wonder ful
@@ -2035,7 +2032,7 @@ pec t
  b an
 irp y
 bo x
-? â
+? \xe2\x80\x9d
  was h
  l ay
  p our
@@ -3558,7 +3555,7 @@ gl asses
  cost ume
  d ess
  z ipp
-, â
+, \xe2\x80\x9d
  re pe
  muff in
  ar g
@@ -4351,7 +4348,7 @@ Gra ndma
  ho l
 ic er
  hol iday
-  â
+  \xe2\x80
  bark s
 as on
  throw ing
@@ -4686,8 +4683,7 @@ la imed
  G eorge
  l uck
  follow ing
-  
-
+  \n
  pri ce
 ec ting
  m ama
@@ -4825,7 +4821,7 @@ u esday
  app reci
  S ophie
  Joe y
- â 
+ \xe2\x80 \x93
  eag erly
  sail ing
  Co co
@@ -5818,7 +5814,7 @@ F r
  comple ted
  W isdom
  Le ave
-â .
+\xe2\x80\x9d .
  knight s
  flag s
  J e
@@ -6513,8 +6509,7 @@ o ke
  g ri
 ver s
  grow s
-  
- 
+  \n 
  sweet s
  Good bye
  own ers
@@ -6774,7 +6769,7 @@ us ing
 ing o
  refle ction
  hus band
-â 
+\xe2\x80 \x94
 T ake
 ri ver
  cl ues
@@ -6799,7 +6794,7 @@ u de
  zebra s
  hedge hog
  a ff
- â 
+ \xe2\x80 \x98
  borrow ed
  Ro llie
  snow fl
@@ -7068,7 +7063,7 @@ p rin
  am ong
  bl own
   icing
-!â .
+!\xe2\x80\x9d .
  r umble
  after wards
 ipp er
@@ -8052,7 +8047,7 @@ p o
  P op
  Mad die
 Sad ly
- â 
+ \xe2\x80 \x94
  travel s
  al iens
  test s
@@ -8720,7 +8715,7 @@ F ire
  Mad dy
  Dan iel
  An imal
-â ¦
+\xe2\x80 \xa6
 r or
  P ig
  M ine
@@ -8833,7 +8828,7 @@ st orm
 ay e
  sun s
  d ing
-â ,
+\xe2\x80\x9d ,
  zip s
  structure s
  scurry ing
@@ -8886,7 +8881,7 @@ wel come
 s ers
 rag on
 o f
-?â .
+?\xe2\x80\x9d .
 and ra
  po se
  disappoint ment
@@ -9529,7 +9524,7 @@ col ored
 r um
 izz a
 d og
-! â
+! \xe2\x80\x99
  st un
  guit ars
  chick s
