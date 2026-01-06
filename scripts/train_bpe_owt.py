@@ -7,9 +7,13 @@ import json
 import sys
 
 from cs336_basics.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
+from scripts.bpe_verify import verify_tokenizer_roundtrip
 
 def _bytes_to_str(b: bytes) -> str:
     return b.decode("latin-1")
+
+def _bytes_to_escaped_str(b: bytes) -> str:
+    return b.decode("latin-1").encode("unicode_escape").decode("ascii")
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
@@ -47,7 +51,15 @@ def main() -> None:
 
     with open(output_dir / "owt_merges.txt", "w", encoding="utf-8") as f:
         for a, b in merges:
-            f.write(f"{_bytes_to_str(a)} {_bytes_to_str(b)}\n")
+            f.write(f"{_bytes_to_escaped_str(a)} {_bytes_to_escaped_str(b)}\n")
+
+    verify_tokenizer_roundtrip(
+        vocab=vocab,
+        merges=merges,
+        vocab_path=output_dir / "owt_vocab.json",
+        merges_path=output_dir / "owt_merges.txt",
+        special_tokens=["<|endoftext|>"],
+    )
 
     peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     print(f"Platform: {sys.platform}, ru_maxrss: {peak}")

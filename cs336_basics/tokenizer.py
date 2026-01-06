@@ -69,50 +69,50 @@ class Tokenizer(object):
 
         # -------- merges.txt --------
         merges: list[tuple[bytes, bytes]] = []
-        escaped_mode = False
+        vocab_bytes = set(vocab.values())
         with open(merges_file_path, "r", encoding="utf-8") as f:
             for line_no, line in enumerate(f, start=1):
                 line = line.rstrip("\n")
-                if not line:
-                    continue
-
-                if not escaped_mode and any(
-                    seq in line for seq in ("\\x", "\\n", "\\t", "\\r", "\\u", "\\U", "\\0")
-                ):
-                    escaped_mode = True
-
-                trailing_spaces = len(line) - len(line.rstrip(" "))
-                if trailing_spaces > 0:
-                    sep_index = len(line) - trailing_spaces - 1
-                    if sep_index < 0 or line[sep_index] != " ":
-                        raise ValueError(f"bad merges line {line_no}: {line!r}")
-                    a = line[:sep_index]
-                    b = " " * (trailing_spaces - 1)
-                    if b == "":
+                if line == "":
+                    raise ValueError(f"bad merges line {line_no} (empty line)")
+                for ch in line:
+                    code = ord(ch)
+                    if code < 32 or 0x7F <= code <= 0x9F:
                         raise ValueError(
-                            f"bad merges line {line_no} (empty second token): {line!r}"
+                            f"bad merges line {line_no} (control char): {line!r}"
                         )
+
+                def _parse_candidates(src: str, *, decode_escapes: bool) -> list[tuple[bytes, bytes]]:
+                    candidates: list[tuple[bytes, bytes]] = []
+                    for i, ch in enumerate(src):
+                        if ch != " ":
+                            continue
+                        a = src[:i]
+                        b = src[i + 1 :]
+                        if b == "":
+                            continue
+                        if decode_escapes:
+                            try:
+                                a = a.encode("ascii").decode("unicode_escape")
+                                b = b.encode("ascii").decode("unicode_escape")
+                            except (UnicodeEncodeError, UnicodeDecodeError):
+                                continue
+                        a_bytes = cls._token_str_to_bytes(a)
+                        b_bytes = cls._token_str_to_bytes(b)
+                        if a_bytes in vocab_bytes and b_bytes in vocab_bytes:
+                            candidates.append((a_bytes, b_bytes))
+                    return candidates
+
+                raw_candidates = _parse_candidates(line, decode_escapes=False)
+                esc_candidates = _parse_candidates(line, decode_escapes=True)
+                unique = {(a, b) for a, b in (raw_candidates + esc_candidates)}
+
+                if len(unique) == 1:
+                    merges.append(next(iter(unique)))
+                elif len(unique) == 0:
+                    raise ValueError(f"bad merges line {line_no}: {line!r}")
                 else:
-                    # Preserve leading spaces in token1: split by the LAST space.
-                    j = line.rfind(" ")
-                    if j == -1:
-                        raise ValueError(f"bad merges line {line_no}: {line!r}")
-
-                    a = line[:j]
-                    b = line[j + 1 :]
-                    if b == "":
-                        raise ValueError(
-                            f"bad merges line {line_no} (empty second token): {line!r}"
-                        )
-
-                if escaped_mode:
-                    try:
-                        a = a.encode("ascii").decode("unicode_escape")
-                        b = b.encode("ascii").decode("unicode_escape")
-                    except UnicodeDecodeError:
-                        pass
-
-                merges.append((cls._token_str_to_bytes(a), cls._token_str_to_bytes(b)))
+                    raise ValueError(f"ambiguous merges line {line_no}: {line!r}")
 
         return cls(vocab=vocab, merges=merges, special_tokens=special_tokens)
 
