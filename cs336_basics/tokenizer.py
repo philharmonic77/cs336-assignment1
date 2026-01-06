@@ -1,6 +1,7 @@
 import regex as re
+import json
 from typing import Iterable, Iterator, Self
-from pretokenize import compile_special_pattern, split_by_special_tokens
+from .pretokenize import compile_special_pattern, split_by_special_tokens
 
 
 class Tokenizer(object):
@@ -43,7 +44,6 @@ class Tokenizer(object):
         self.pretoken_pattern = re.compile(PAT)
 
         self.bpe_cache: dict[bytes, list[bytes]] = {}
-
         self.byte_tokens: list[bytes] = [bytes([i]) for i in range(256)]
 
     @classmethod
@@ -51,7 +51,43 @@ class Tokenizer(object):
                   vocab_filepath: str, 
                   merges_file_path: str, 
                   special_tokens: list[str] | None = None) -> Self:
-        raise NotImplementedError
+        # -------- vocab.json --------
+        with open(vocab_filepath, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+
+        if not isinstance(raw, dict):
+            raise ValueError("vocab json must be an object mapping id->token")
+
+        vocab: dict[int, bytes] = {}
+        for k, v in raw.items():
+            if not isinstance(k, str):
+                raise ValueError("vocab json keys must be strings")
+            if not isinstance(v, str):
+                raise ValueError("vocab json values must be strings")
+            tid = int(k)
+            vocab[tid] = cls._token_str_to_bytes(v)
+
+        # -------- merges.txt --------
+        merges: list[tuple[bytes, bytes]] = []
+        with open(merges_file_path, "r", encoding="utf-8") as f:
+            for line_no, line in enumerate(f, start=1):
+                line = line.rstrip("\n")
+                if not line:
+                    continue
+
+                # Preserve leading spaces in token1: split by the LAST space.
+                j = line.rfind(" ")
+                if j == -1:
+                    raise ValueError(f"bad merges line {line_no}: {line!r}")
+
+                a = line[:j]
+                b = line[j + 1 :]
+                if b == "":
+                    raise ValueError(f"bad merges line {line_no} (empty second token): {line!r}")
+
+                merges.append((cls._token_str_to_bytes(a), cls._token_str_to_bytes(b)))
+
+        return cls(vocab=vocab, merges=merges, special_tokens=special_tokens)
 
     def encode(self, text: str) -> list[int]:
         if text == "":
@@ -82,6 +118,13 @@ class Tokenizer(object):
     def decode(self, ids: list[int]) -> str:
         bs = b"".join(self.id_to_bytes[i] for i in ids)
         return bs.decode("utf-8", errors="replace")
+    
+    @staticmethod
+    def _token_str_to_bytes(tok: str) -> bytes:
+        try:
+            return tok.encode("latin-1")
+        except UnicodeEncodeError:
+            return tok.encode("utf-8")
         
     def _bpe(self, bs: bytes) -> list[bytes]:
         """

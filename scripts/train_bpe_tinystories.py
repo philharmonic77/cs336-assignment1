@@ -9,6 +9,12 @@ import sys
 from cs336_basics.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
 
 def _bytes_to_str(b: bytes) -> str:
+    """
+    •	Latin-1 和 UTF-8 是不同体系
+	•	ASCII 区间它们碰巧一致
+	•	UTF-8 会“扩展字节”，Latin-1 永不扩展
+	•	tokenizer 的 vocab/merges 必须用 Latin-1 才能保持 byte-level 语义
+    """
     return b.decode("latin-1")
 
 def main() -> None:
