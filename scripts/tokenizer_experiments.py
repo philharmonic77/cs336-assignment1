@@ -1,6 +1,8 @@
 from cs336_basics.tokenizer import Tokenizer
 from pathlib import Path
 import random
+import time
+import numpy as np
 
 RANDOM_SEED = 20260101
 
@@ -14,64 +16,146 @@ def sample_docs(
     random.seed(seed)
 
     docs: list[str] = []
-    buffer = []
+    buffer: list[str] = []
     read_bytes = 0
 
     with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
             read_bytes += len(line.encode("utf-8"))
+
+            parts = line.split(boundary_token)
+            for i, chunk in enumerate(parts):
+                if i == 0:
+                    buffer.append(chunk)
+                else:
+                    doc = "".join(buffer).strip()
+                    if doc:
+                        docs.append(doc)
+                    buffer = [chunk]
+
             if read_bytes > max_bytes:
                 break
 
-            if boundary_token in line:
-                parts = line.split(boundary_token)
-
-                # boundary 前的内容属于当前 document
-                buffer.append(parts[0])
-                doc = "".join(buffer).strip()
-                if doc:
-                    docs.append(doc)
-
-                # boundary 后的内容属于下一个 document
-                buffer = [parts[1]] if len(parts) > 1 else []
-            else:
-                buffer.append(line)
+    # flush last (possibly truncated) doc within the 100MB window
+    tail = "".join(buffer).strip()
+    if tail:
+        docs.append(tail)
 
     if len(docs) < n:
-        raise ValueError(f"Insufficient documents in the first 100MB: found {len(docs)}, required {n}.")
+        raise ValueError(
+            f"Insufficient documents in the first 100MB: found {len(docs)}, required {n}."
+        )
 
     return random.sample(docs, n)
 
-def get_compression_ratio(text: str, tokenizer, encoding: str = "utf-8") -> float:
-    if not text:
-        raise ValueError("text can't be empty!")
+def print_compression_ratio(
+    texts: list[str],
+    tokenizer,
+    encoding: str = "utf-8",
+    name: str = ""
+) -> None:
+    if not texts:
+        raise ValueError("texts can't be empty!")
 
-    num_bytes = len(text.encode(encoding))
+    total_bytes = 0
+    total_tokens = 0
 
-    tokens = tokenizer.encode(text)
-    num_tokens = len(tokens)
+    for text in texts:
+        if not text:
+            continue
 
-    if num_tokens == 0:
-        raise ValueError("tokenizer returns 0 token!")
+        total_bytes += len(text.encode(encoding))
+        total_tokens += len(tokenizer.encode(text))
 
-    return num_bytes / num_tokens
+    if total_tokens == 0:
+        raise ValueError("tokenizer returned 0 tokens!")
+    
+    ratio = total_bytes / total_tokens
+    print(f"{name} total_bytes: {total_bytes}, total_tokens: {total_tokens} => compression_ratio: {ratio:.4f} bytes/token")
+
+    return None
+
+def measure_tokenizer_throughput(
+    texts: list[str],
+    tokenizer,
+    encoding: str = "utf-8",
+    repeats: int = 3,
+) -> tuple[float, float]:
+    """
+    返回:
+      - bytes_per_sec
+      - tokens_per_sec
+    """
+    if not texts:
+        raise ValueError("texts can't be empty!")
+
+    total_bytes = sum(len(t.encode(encoding)) for t in texts if t)
+    total_tokens = 0
+
+    # warm-up
+    for _ in tokenizer.encode_iterable(texts[:10]):
+        pass
+
+    start = time.perf_counter()
+    for _ in range(repeats):
+        for _ in tokenizer.encode_iterable(texts):
+            total_tokens += 1
+    elapsed = time.perf_counter() - start
+
+    if elapsed <= 0:
+        raise ValueError("Timer resolution issue")
+
+    bytes_per_sec = (total_bytes * repeats) / elapsed
+    tokens_per_sec = total_tokens / elapsed
+
+    return bytes_per_sec, tokens_per_sec
+
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
 
-    tinystories_samples = sample_docs(str(repo_root / "data" / "TinyStoriesV2-GPT4-train.txt"))
-    # owt_samples = sample_docs(str(repo_root / "data" / "owt_train.txt"))
+    TS_train_data_path = str(repo_root / "data" / "TinyStoriesV2-GPT4-train.txt")
+    TS_valid_data_path = str(repo_root / "data" / "TinyStoriesV2-GPT4-valid.txt")
+    TS_vocab_path = str(repo_root / "artifacts" / "bpe" / "tinystories_vocab.json")
+    TS_merges_path = str(repo_root / "artifacts" / "bpe" / "tinystories_merges.txt")
 
-    tinystories_tokenizer = Tokenizer.from_file(vocab_filepath=str(repo_root / "artifacts" / "bpe" / "tinystories_vocab.json"),
-                                                merges_file_path=str(repo_root / "artifacts" / "bpe" / "tinystories_merges.txt"),
+    OWT_train_data_path = str(repo_root / "data" / "owt-train.txt")
+    OWT_valid_data_path = str(repo_root / "data" / "owt-valid.txt")
+    OWT_vocab_path = str(repo_root / "artifacts" / "bpe" / "owt_vocab.json")
+    OWT_merges_path = str(repo_root / "artifacts" / "bpe" / "owt_merges.txt")
+
+    tinystories_samples = sample_docs(TS_train_data_path, n=10)
+    owt_samples = sample_docs(OWT_train_data_path, n=10)
+
+    tinystories_tokenizer = Tokenizer.from_file(TS_vocab_path,
+                                                TS_merges_path,
                                                 special_tokens=["<|endoftext|>"])
-    # owt_tokenizer = Tokenizer.from_file(vocab_filepath=str(repo_root / "artifacts" / "bpe" / "owt_vocab.json"),
-    #                                     merges_file_path=str(repo_root / "artifacts" / "bpe" / "owt_merges.txt"),
-    #                                     special_tokens=["<|endoftext|>"])
+    owt_tokenizer = Tokenizer.from_file(OWT_vocab_path,
+                                        OWT_merges_path,
+                                        special_tokens=["<|endoftext|>"])
     
-    print(len(tinystories_samples), tinystories_samples[9])
-    print(tinystories_tokenizer)
-    # print(owt_tokenizer)
+    owt_samples_10k = sample_docs(OWT_train_data_path, n=10_000, max_bytes=300 * 1024 * 1024)
+    
+    print("================ problem (a) ================")
+    print_compression_ratio(tinystories_samples, tinystories_tokenizer, name="TS data + TS tok:")
+    print_compression_ratio(owt_samples, owt_tokenizer, name="OWT data + OWT tok:")
+
+    print("================ problem (b) ================")
+    print_compression_ratio(owt_samples, tinystories_tokenizer, name="OWT data + TS tok:")
+    print_compression_ratio(tinystories_samples, owt_tokenizer, name="TS data + OWT tok")
+
+    print("================ problem (c) ================")
+    bps, tps = measure_tokenizer_throughput(owt_samples_10k, owt_tokenizer, repeats=3)
+
+    pile_bytes = 825 * 1_000_000_000
+    seconds = pile_bytes / bps
+
+    print(f"OWT tokenizer throughput: {bps/1e6:.2f} MB/s")
+    print(f"Estimated time for 825GB: {seconds/3600:.2f} hours ({seconds/3600/24:.2f} days)")
+    print(f"(optional) tokens/sec: {tps/1e6:.2f} M tokens/s")
+
+    print("================ problem (d) ================")
+
     
 if __name__ == "__main__":
     main()

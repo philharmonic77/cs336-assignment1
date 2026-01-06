@@ -1,10 +1,12 @@
 import json
 from collections import Counter
 
+from cs336_basics.gpt2_bytes import bytes_to_gpt2_str, gpt2_str_to_bytes
+
 def load_vocab(path):
     with open(path, "r", encoding="utf-8") as f:
         vocab = json.load(f)
-    return {int(k): v.encode("utf-8") for k, v in vocab.items()}
+    return {int(k): gpt2_str_to_bytes(v) for k, v in vocab.items()}
 
 ts_vocab = load_vocab("artifacts/bpe/tinystories_vocab.json")
 owt_vocab = load_vocab("artifacts/bpe/owt_vocab.json")
@@ -21,7 +23,7 @@ def summarize(name, vocab):
     longest = sorted(vocab.values(), key=len, reverse=True)[:5]
     print("longest tokens:")
     for b in longest:
-        print(" ", repr(b[:60]))
+        print(" ", bytes_to_gpt2_str(b))
 
 summarize("TinyStories", ts_vocab)
 summarize("OpenWebText", owt_vocab)
