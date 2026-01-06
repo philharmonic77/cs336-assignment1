@@ -68,7 +68,7 @@ The longest token in the vocab is `'ÃĥÃĤÃĥÃĤÃĥÃĤÃĥÃĤÃĥÃĤÃĥ
 
 This token is not meant to represent a readable character or word. It is a high-frequency byte sequence that appears repeatedly in the training corpus. The pattern `ÃĥÃĤ` corresponds to a specific UTF-8 byte sequence that commonly arises from misinterpreted or re-encoded UTF-8 text (often called mojibake).
 
-(b) By running this [scripts](scripts/compare_vocabs.py), we can conclude their key differences are:
+(b) By running this [script](scripts/compare_vocabs.py), we can conclude their key differences are:
 ``` txt
 == TinyStories ==
 vocab size: 10000
@@ -101,7 +101,7 @@ only OpenWebText: 24681
  - The OpenWebText tokenizer learns a much larger and more diverse vocabulary, including very long byte-level tokens and noisy UTF-8 artifacts, capturing the heterogeneous, messy, and web-scale characteristics of internet text.
 
 #### Problem (tokenizer_experiments): Experiments with tokenizers
-Below are the outputs produced by from this [scripts](scripts/tokenizer_experiments.py).
+Below are the outputs produced by from this [script](scripts/tokenizer_experiments.py).
 ```
 ================ problem (a) ================
 TS data + TS tok: total_bytes: 9170, total_tokens: 2225 => compression_ratio: 4.1213 bytes/token
