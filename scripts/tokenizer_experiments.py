@@ -119,8 +119,8 @@ def main() -> None:
     TS_vocab_path = str(repo_root / "artifacts" / "bpe" / "tinystories_vocab.json")
     TS_merges_path = str(repo_root / "artifacts" / "bpe" / "tinystories_merges.txt")
 
-    OWT_train_data_path = str(repo_root / "data" / "owt-train.txt")
-    OWT_valid_data_path = str(repo_root / "data" / "owt-valid.txt")
+    OWT_train_data_path = str(repo_root / "data" / "owt_train.txt")
+    OWT_valid_data_path = str(repo_root / "data" / "owt_valid.txt")
     OWT_vocab_path = str(repo_root / "artifacts" / "bpe" / "owt_vocab.json")
     OWT_merges_path = str(repo_root / "artifacts" / "bpe" / "owt_merges.txt")
 
