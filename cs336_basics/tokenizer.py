@@ -1,8 +1,8 @@
 import regex as re
 import json
 from typing import Iterable, Iterator, Self
-from .pretokenize import compile_special_pattern, split_by_special_tokens
-from .gpt2_bytes import gpt2_str_to_bytes
+from cs336_basics.pretokenize import compile_special_pattern, split_by_special_tokens
+from cs336_basics.gpt2_bytes import gpt2_str_to_bytes
 
 
 class Tokenizer(object):
