@@ -111,30 +111,78 @@ def measure_tokenizer_throughput(
     return bytes_per_sec, tokens_per_sec
 
 
+def encode_file_to_npy(
+    input_path: str,
+    output_path: str,
+    tokenizer: Tokenizer,
+    encoding: str = "utf-8",
+    chunk_size: int = 1_000_000,
+    log_every_tokens: int = 50_000_000,
+) -> None:
+    max_id = len(tokenizer.id_to_bytes) - 1
+    if max_id > np.iinfo(np.uint16).max:
+        raise ValueError(f"tokenizer vocab too large for uint16: max_id={max_id}")
+
+    print(f"[encode] counting tokens in {input_path}")
+    total_tokens = 0
+    with open(input_path, "r", encoding=encoding) as f:
+        for tid in tokenizer.encode_iterable(f):
+            total_tokens += 1
+
+    print(f"[encode] total tokens: {total_tokens}, writing to {output_path}")
+    arr = np.lib.format.open_memmap(
+        output_path, mode="w+", dtype=np.uint16, shape=(total_tokens,)
+    )
+
+    offset = 0
+    buffer: list[int] = []
+    next_log = log_every_tokens
+    with open(input_path, "r", encoding=encoding) as f:
+        for tid in tokenizer.encode_iterable(f):
+            buffer.append(tid)
+            if len(buffer) >= chunk_size:
+                end = offset + len(buffer)
+                arr[offset:end] = np.asarray(buffer, dtype=np.uint16)
+                offset = end
+                if log_every_tokens > 0 and offset >= next_log:
+                    print(f"[encode] wrote {offset} tokens...")
+                    next_log += log_every_tokens
+                buffer.clear()
+
+    if buffer:
+        end = offset + len(buffer)
+        arr[offset:end] = np.asarray(buffer, dtype=np.uint16)
+
+    print(f"[encode] done: {output_path}")
+
+
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
 
-    TS_train_data_path = str(repo_root / "data" / "TinyStoriesV2-GPT4-train.txt")
-    TS_valid_data_path = str(repo_root / "data" / "TinyStoriesV2-GPT4-valid.txt")
-    TS_vocab_path = str(repo_root / "artifacts" / "bpe" / "tinystories_vocab.json")
-    TS_merges_path = str(repo_root / "artifacts" / "bpe" / "tinystories_merges.txt")
+    TS_train_data_path = repo_root / "data" / "TinyStoriesV2-GPT4-train.txt"
+    TS_valid_data_path = repo_root / "data" / "TinyStoriesV2-GPT4-valid.txt"
+    TS_vocab_path = repo_root / "artifacts" / "bpe" / "tinystories_vocab.json"
+    TS_merges_path = repo_root / "artifacts" / "bpe" / "tinystories_merges.txt"
 
-    OWT_train_data_path = str(repo_root / "data" / "owt_train.txt")
-    OWT_valid_data_path = str(repo_root / "data" / "owt_valid.txt")
-    OWT_vocab_path = str(repo_root / "artifacts" / "bpe" / "owt_vocab.json")
-    OWT_merges_path = str(repo_root / "artifacts" / "bpe" / "owt_merges.txt")
+    OWT_train_data_path = repo_root / "data" / "owt_train.txt"
+    OWT_valid_data_path = repo_root / "data" / "owt_valid.txt"
+    OWT_vocab_path = repo_root / "artifacts" / "bpe" / "owt_vocab.json"
+    OWT_merges_path = repo_root / "artifacts" / "bpe" / "owt_merges.txt"
 
-    tinystories_samples = sample_docs(TS_train_data_path, n=10)
-    owt_samples = sample_docs(OWT_train_data_path, n=10)
+    tokenized_dir = repo_root / "artifacts" / "tokenized"
+    tokenized_dir.mkdir(parents=True, exist_ok=True)
 
-    tinystories_tokenizer = Tokenizer.from_file(TS_vocab_path,
-                                                TS_merges_path,
+    tinystories_samples = sample_docs(str(TS_train_data_path), n=10)
+    owt_samples = sample_docs(str(OWT_train_data_path), n=10)
+
+    tinystories_tokenizer = Tokenizer.from_file(str(TS_vocab_path),
+                                                str(TS_merges_path),
                                                 special_tokens=["<|endoftext|>"])
-    owt_tokenizer = Tokenizer.from_file(OWT_vocab_path,
-                                        OWT_merges_path,
+    owt_tokenizer = Tokenizer.from_file(str(OWT_vocab_path),
+                                        str(OWT_merges_path),
                                         special_tokens=["<|endoftext|>"])
     
-    owt_samples_10k = sample_docs(OWT_train_data_path, n=10_000, max_bytes=300 * 1024 * 1024)
+    owt_samples_10k = sample_docs(str(OWT_train_data_path), n=10_000, max_bytes=300 * 1024 * 1024)
     
     print("================ problem (a) ================")
     print_compression_ratio(tinystories_samples, tinystories_tokenizer, name="TS data + TS tok:")
@@ -155,6 +203,26 @@ def main() -> None:
     print(f"(optional) tokens/sec: {tps/1e6:.2f} M tokens/s")
 
     print("================ problem (d) ================")
+    encode_file_to_npy(
+        str(TS_train_data_path),
+        str(tokenized_dir / "tinystories_train.npy"),
+        tinystories_tokenizer,
+    )
+    encode_file_to_npy(
+        str(TS_valid_data_path),
+        str(tokenized_dir / "tinystories_valid.npy"),
+        tinystories_tokenizer,
+    )
+    encode_file_to_npy(
+        str(OWT_train_data_path),
+        str(tokenized_dir / "owt_train.npy"),
+        owt_tokenizer,
+    )
+    encode_file_to_npy(
+        str(OWT_valid_data_path),
+        str(tokenized_dir / "owt_valid.npy"),
+        owt_tokenizer,
+    )
 
     
 if __name__ == "__main__":
