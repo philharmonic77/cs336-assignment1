@@ -11,7 +11,7 @@ from torch import Tensor
 
 from cs336_basics.train_bpe import ParallelConfig, train_byte_level_bpe_incremental
 from cs336_basics.tokenizer import Tokenizer
-from cs336_basics.nn.layers import Linear, Embedding
+from cs336_basics.nn.layers import Linear, Embedding, RMSNorm, PositionwiseFeedForward
 
 def run_linear(
     d_in: int,
@@ -92,7 +92,13 @@ def run_swiglu(
     # swiglu.w1.weight.data = w1_weight
     # swiglu.w2.weight.data = w2_weight
     # swiglu.w3.weight.data = w3_weight
-    raise NotImplementedError
+    FFN = PositionwiseFeedForward(d_model, d_ff, device=w1_weight.device, dtype=w1_weight.dtype)
+    result = FFN.load_state_dict({"w1.weight": w1_weight,
+                                  "w2.weight": w2_weight,
+                                  "w3.weight": w3_weight,})
+    print(result)
+
+    return FFN(in_features)
 
 
 def run_scaled_dot_product_attention(
@@ -387,7 +393,10 @@ def run_rmsnorm(
         Float[Tensor,"... d_model"]: Tensor of with the same shape as `in_features` with the output of running
         RMSNorm of the `in_features`.
     """
-    raise NotImplementedError
+    rmsnorm_layer = RMSNorm(d_model, eps, weights.device, weights.dtype)
+    result = rmsnorm_layer.load_state_dict({"rms_g": weights})
+    print(result)
+    return rmsnorm_layer(in_features)
 
 
 def run_silu(in_features: Float[Tensor, " ..."]) -> Float[Tensor, " ..."]:
