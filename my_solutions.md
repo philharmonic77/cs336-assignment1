@@ -1,6 +1,6 @@
 ## Solutions
 
-#### Problem(unicode1): Understanding Unicode (1 point)
+### Problem(unicode1): Understanding Unicode (1 point)
 
 (a) `chr(0)` is the Unicode character U+0000, which is called the NUL (Null) character with length=1. In python interpreter, It will return '\x00', but if we print it using `print(chr(0))`, we will get nothing visible.
 
@@ -12,7 +12,7 @@
 
 (c) `print()`shows the contents of a string, while `repr()` shows the string as a string. `print()`or`str()`is designed for human-readable output, it shows the value of the object.
 
-#### Problem (unicode2): Unicode Encodings (3 points)
+### Problem (unicode2): Unicode Encodings (3 points)
 
 (a) More common in real world text、more compact (shorter sequence)、less 0 bytes (wasteful).
 
@@ -38,7 +38,7 @@ Cell In[50], line 1
 UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected end of data
 ```
 
-#### Problem (train_bpe_tinystories): BPE Training on TinyStories
+### Problem (train_bpe_tinystories): BPE Training on TinyStories
 (a) It takes me 125.79 seconds and 0.121G memory to train BPE on tinystores. The longest token in the vocab is `'Ġaccomplishment'`, which make sense.  
 (b) The step `_select_pair` function takes the most time, which is 90 seconds. Besides, `_build_word_freq` takes 30 seconds.
 
@@ -47,7 +47,7 @@ UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected
 (a) It takes me 42.39 seconds and 0.219G memory to train BPE on tinystores. The longest token in the vocab is `'Ġaccomplishment'`, which make sense.  
 (b) The step `_build_word_freq` function takes the most time, which is 30 seconds. 
 
-#### Problem (train_bpe_expts_owt): BPE Training on OpenWebText
+### Problem (train_bpe_expts_owt): BPE Training on OpenWebText
 (a) It takes me 7569 seconds and 24.34 G memory to train BPE, the logs during training can be found at [here](logs/train_bpe_owt_log.txt).   
 <table>
 <tr>
@@ -100,7 +100,7 @@ only OpenWebText: 24681
  - The TinyStories tokenizer learns mostly short, human-readable English word and subword tokens, reflecting the clean, simple, and homogeneous nature of the corpus. 
  - The OpenWebText tokenizer learns a much larger and more diverse vocabulary, including very long byte-level tokens and noisy UTF-8 artifacts, capturing the heterogeneous, messy, and web-scale characteristics of internet text.
 
-#### Problem (tokenizer_experiments): Experiments with tokenizers
+### Problem (tokenizer_experiments): Experiments with tokenizers
 Below are the outputs produced by from this [script](scripts/tokenizer_experiments.py).
 ```
 ================ problem (a) ================
@@ -121,6 +121,73 @@ Estimated time for 825GB: 58.60 hours (2.44 days)
 (c) The OpenWebText tokenizer runs at about 3.91 MB/s, so tokenizing the 825GB Pile would take approximately 58.6 hours (~2.44 days).
 
 (d) uint16 is appropriate because it can represent token IDs in the range 0–65535, which safely covers vocabularies of 10K and 32K, while halving storage and I/O cost relative to int32.
+
+### Problem (transformer_accounting): Transformer LM resource accounting
+Let the model configuration be defined as follows:  
+	•	V: vocabulary size  
+	•	S: sequence length (context length)  
+	•	B: batch size  
+	•	N: number of Transformer blocks (layers)  
+	•	D: model dimension (d_model)  
+	•	H: number of attention heads  
+	•	D_h = D / H: per-head dimension  
+	•	F: feed-forward hidden dimension (d_ff)
+**FLOPs**
+
+\[
+\boxed{
+\text{FLOPs}
+\;=\;
+2BSDV
+\;+\;
+N \left( 6BSDF \;+\; 8BSD^2 \;+\; 4BS^2D \right)
+}
+\]
+
+**Number of Trainable Parameters**
+
+\[
+\boxed{
+\#\text{params}
+\;=\;
+2VD
+\;+\;
+D
+\;+\;
+N \left( 3DF \;+\; 4D^2 \;+\; 2D \right)
+}
+\]
+
+*Assumes no weight tying, no bias terms, RMSNorm, and RoPE with no trainable parameters.*
+
+(a) #trainable params = 2.13B.  
+ 1 param = 4 bytes, memory = 8.1G, this is just for model parameters (no optimizer state, activations, gradients, or KV cache)
+
+(b) FLOPs are reported per sequence, ignoring the batch size B：
+| Component | Matrix Multiplies| FLOPs | |
+|---|---|---:|---|
+| **Attention** | (1) Q/K/V/O projection: \((BS \times D)(D \times D)\)  <br> (2) Attention scores \(QK^\T\)  <br> (3) Attention weighted sum  <br>  | N(8BSD^2+4BS^2D) | 1.33T |
+| **FFN (SwiGLU)** | (1) Up-projection \(W_1: (BS \times D)(D \times F)\)  <br> (2) Gate projection \(W_3: (BS \times D)(D \times F)\)  <br> (3) Down-projection \(W_2: (BS \times F)(F \times D)\) | N(6BSDF) | 3.02T |
+| **LM head** | (1) Vocabulary projection: \((BS \times D)(D \times V)\) | \(2BSDV\) | 0.17T |
+| **Total** |  | 2BSDV + N(6BSDF + 8BSD^2 + 4BS^2D) | 4.51T |
+
+(c) FFN equire the most FLOPs.  
+(d) Suppose that d_ff = 4*d_model, the FLOPs of these three models are as follows:
+| model  | **Attention**   | **FFN (SwiGLU)**  | **LM head**  | **Total** |
+|---|---|---|---|---|
+| GPT-2 small (12 layers, 768 d_model, 12 heads)  | 96.64B(28%)  | 173.951B(50%)  | 79.05B(23%)  | 349.63B  |
+| GPT-2 medium (24 layers, 1024 d_model, 16 heads)  | 309.23B(30%)  | 618.48B(60%)  | 105.40B(10%)  | 1033.11B  |
+|  GPT-2 large (36 layers, 1280 d_model, 20 heads) | 676.46B(30%)  | 1449.55B(64%)  | 131.75B(6%)  | 2257.75B  |
+
+As model size increases, the FFN share grows (about 50% → 60% → 64%) while the lm_head share shrinks sharply (about 23% → 10% → 6%) because per-layer compute scales roughly like ND^2, whereas lm_head scales like D (for fixed S,V). The attention share stays roughly flat (~28–30%) since both FFN and attention are dominated by D^2-scaling terms at these sizes.
+
+(e) Increasing the context length of GPT-2 XL from 1,024 to 16,384 raises the total FLOPs for a single forward pass from about 4.51 trillion to 1.07 quadrillion FLOPs (≈ 237× increase). As context length grows, the attention component overwhelmingly dominates the total FLOPs due to its S^2 scaling, while the relative contributions of the FFN and lm_head—which scale only linearly with S—shrink substantially.
+| model  | **Attention**   | **FFN (SwiGLU)**  | **LM head**  | **Total** |
+|---|---|---|---|---|
+| GPT-2 XL with S=1,024  | 1.33T(29%)  | 3.02T(67%)  | 79.05B(4%)  | 4.51T  |
+| GPT-2 XL with S=16,384  | 98.57T(66%)  | 48.32T(32%)  | 2.63T(2%)  | 149.52T  |
+
+
 
 ## Notes
 
