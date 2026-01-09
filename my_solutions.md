@@ -132,31 +132,17 @@ Let the model configuration be defined as follows:
 	•	H: number of attention heads  
 	•	D_h = D / H: per-head dimension  
 	•	F: feed-forward hidden dimension (d_ff)
+
 **FLOPs**
 
-\[
-\boxed{
-\text{FLOPs}
-\;=\;
-2BSDV
-\;+\;
-N \left( 6BSDF \;+\; 8BSD^2 \;+\; 4BS^2D \right)
-}
-\]
+FLOPs = 2·B·S·D·V  
+        + N · (6·B·S·D·F + 8·B·S·D² + 4·B·S²·D)
 
 **Number of Trainable Parameters**
 
-\[
-\boxed{
-\#\text{params}
-\;=\;
-2VD
-\;+\;
-D
-\;+\;
-N \left( 3DF \;+\; 4D^2 \;+\; 2D \right)
-}
-\]
+#params = 2·V·D  
+          + D  
+          + N · (3·D·F + 4·D² + 2·D)
 
 *Assumes no weight tying, no bias terms, RMSNorm, and RoPE with no trainable parameters.*
 
@@ -166,9 +152,9 @@ N \left( 3DF \;+\; 4D^2 \;+\; 2D \right)
 (b) FLOPs are reported per sequence, ignoring the batch size B：
 | Component | Matrix Multiplies| FLOPs | |
 |---|---|---:|---|
-| **Attention** | (1) Q/K/V/O projection: \((BS \times D)(D \times D)\)  <br> (2) Attention scores \(QK^\T\)  <br> (3) Attention weighted sum  <br>  | N(8BSD^2+4BS^2D) | 1.33T |
-| **FFN (SwiGLU)** | (1) Up-projection \(W_1: (BS \times D)(D \times F)\)  <br> (2) Gate projection \(W_3: (BS \times D)(D \times F)\)  <br> (3) Down-projection \(W_2: (BS \times F)(F \times D)\) | N(6BSDF) | 3.02T |
-| **LM head** | (1) Vocabulary projection: \((BS \times D)(D \times V)\) | \(2BSDV\) | 0.17T |
+| **Attention** | Q/K/V/O projection + Attention scores  + Attention weighted sum  | N(8BSD^2+4BS^2D) | 1.33T |
+| **FFN (SwiGLU)** | Up-projection + Gate projection + Down-projection  | N(6BSDF) | 3.02T |
+| **LM head** | Vocabulary projection | 2BSDV | 0.17T |
 | **Total** |  | 2BSDV + N(6BSDF + 8BSD^2 + 4BS^2D) | 4.51T |
 
 (c) FFN equire the most FLOPs.  
@@ -181,7 +167,7 @@ N \left( 3DF \;+\; 4D^2 \;+\; 2D \right)
 
 As model size increases, the FFN share grows (about 50% → 60% → 64%) while the lm_head share shrinks sharply (about 23% → 10% → 6%) because per-layer compute scales roughly like ND^2, whereas lm_head scales like D (for fixed S,V). The attention share stays roughly flat (~28–30%) since both FFN and attention are dominated by D^2-scaling terms at these sizes.
 
-(e) Increasing the context length of GPT-2 XL from 1,024 to 16,384 raises the total FLOPs for a single forward pass from about 4.51 trillion to 1.07 quadrillion FLOPs (≈ 237× increase). As context length grows, the attention component overwhelmingly dominates the total FLOPs due to its S^2 scaling, while the relative contributions of the FFN and lm_head—which scale only linearly with S—shrink substantially.
+(e) Increasing the context length of GPT-2 XL from 1,024 to 16,384 raises the total FLOPs for a single forward pass from about 4.51 trillion to 1.07 quadrillion FLOPs (≈ 33× increase). As context length grows, the attention component overwhelmingly dominates the total FLOPs due to its S^2 scaling, while the relative contributions of the FFN and lm_head—which scale only linearly with S—shrink substantially.
 | model  | **Attention**   | **FFN (SwiGLU)**  | **LM head**  | **Total** |
 |---|---|---|---|---|
 | GPT-2 XL with S=1,024  | 1.33T(29%)  | 3.02T(67%)  | 79.05B(4%)  | 4.51T  |
