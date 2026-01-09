@@ -1,8 +1,8 @@
-from jaxtyping import Float, Int, Bool
+from jaxtyping import Float, Int
 import torch
 import math
 from torch import Tensor, nn
-from einops import einsum, rearrange, reduce
+from einops import einsum
 
 class Linear(nn.Module):
     def __init__(
@@ -36,16 +36,16 @@ class Embedding(nn.Module):
             ):
         super().__init__()
 
-        self.embedding : Float[Tensor, "vocab_size d_model"] = nn.Parameter(
+        self.weight : Float[Tensor, "vocab_size d_model"] = nn.Parameter(
             torch.empty(num_embeddings, embedding_dim, device=device, dtype=dtype)
         )
-        nn.init.trunc_normal_(self.embedding, mean=0.0, std=1, a=-3, b=3)
+        nn.init.trunc_normal_(self.weight, mean=0.0, std=1, a=-3, b=3)
 
     def forward(
             self, 
             token_ids: Int[Tensor, "..."]
                 ) -> Float[Tensor, "... d_model"]:
-        return self.embedding[token_ids]
+        return self.weight[token_ids]
     
 class RMSNorm(nn.Module):      
     """
@@ -64,7 +64,7 @@ class RMSNorm(nn.Module):
         super().__init__()
 
         self.eps = eps
-        self.rms_g: Float[Tensor, "d_model"] = nn.Parameter(
+        self.weight: Float[Tensor, "d_model"] = nn.Parameter(
             torch.ones(d_model, device=device, dtype=dtype)
         )
     
@@ -76,7 +76,7 @@ class RMSNorm(nn.Module):
         in_dtype = x.dtype
         x = x.to(torch.float32)
         rms: Float[Tensor, "... 1"] = torch.sqrt(torch.mean(x ** 2, dim=-1, keepdim=True) + self.eps)
-        result: Float[Tensor, "... d_model"] = x / rms * self.rms_g
+        result: Float[Tensor, "... d_model"] = x / rms * self.weight
 
         return result.to(in_dtype)
 

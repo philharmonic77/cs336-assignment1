@@ -2,7 +2,7 @@ from jaxtyping import Float, Int, Bool
 import torch
 import math
 from torch import Tensor, nn
-from einops import einsum, rearrange, reduce
+from einops import einsum, rearrange
 from cs336_basics.nn.layers import Linear
 
 
@@ -119,7 +119,7 @@ class MultiHeadSelfAttention(nn.Module):
         self.k_proj = Linear(d_model, d_model, device=device, dtype=dtype)
         self.v_proj = Linear(d_model, d_model, device=device, dtype=dtype)
 
-        self.o_proj = Linear(d_model, d_model, device=device, dtype=dtype)
+        self.output_proj = Linear(d_model, d_model, device=device, dtype=dtype)
 
     def forward(
             self, 
@@ -156,7 +156,7 @@ class MultiHeadSelfAttention(nn.Module):
 
         # projection
         out = rearrange(out, "... h seq d_h -> ... seq (h d_h)")
-        out: Float[Tensor, "... d_model"] = self.o_proj(out)
+        out: Float[Tensor, "... d_model"] = self.output_proj(out)
 
         return out
 
