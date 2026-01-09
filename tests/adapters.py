@@ -14,6 +14,7 @@ from cs336_basics.tokenizer import Tokenizer
 from cs336_basics.nn.layers import Linear, Embedding, RMSNorm, PositionwiseFeedForward
 from cs336_basics.nn.attention import RotaryPositionalEmbedding, softmax, scaled_dot_product_attention,\
     MultiHeadSelfAttention
+from cs336_basics.nn.transformer import TransformerBlock, TransformerLM
 
 def run_linear(
     d_in: int,
@@ -312,7 +313,13 @@ def run_transformer_block(
         Float[Tensor, "batch sequence_length d_model"] Tensor with the output of
         running the Transformer block on the input features while using RoPE.
     """
-    raise NotImplementedError
+    rope = RotaryPositionalEmbedding(theta, d_model//num_heads, max_seq_len, device=in_features.device)
+    
+    block = TransformerBlock(d_model, num_heads, d_ff, rope=rope, device=in_features.device, dtype=in_features.dtype)
+    result = block.load_state_dict(weights)
+    print(result)
+    out = block(in_features)
+    return out
 
 
 def run_transformer_lm(
@@ -394,8 +401,11 @@ def run_transformer_lm(
         Float[Tensor, "batch_size sequence_length vocab_size"]: Tensor with the predicted unnormalized
         next-word distribution for each token.
     """
-    raise NotImplementedError
-
+    model = TransformerLM(vocab_size, context_length, num_layers, d_model, num_heads, d_ff, rope_theta, device=in_indices.device, dtype=torch.float32)
+    result = model.load_state_dict(weights)
+    print(result)
+    out = model(in_indices)
+    return out
 
 def run_rmsnorm(
     d_model: int,
