@@ -167,7 +167,7 @@ FLOPs = 2·B·S·D·V
 
 As model size increases, the FFN share grows (about 50% → 60% → 64%) while the lm_head share shrinks sharply (about 23% → 10% → 6%) because per-layer compute scales roughly like ND^2, whereas lm_head scales like D (for fixed S,V). The attention share stays roughly flat (~28–30%) since both FFN and attention are dominated by D^2-scaling terms at these sizes.
 
-(e) Increasing the context length of GPT-2 XL from 1,024 to 16,384 raises the total FLOPs for a single forward pass from about 4.51 trillion to 1.07 quadrillion FLOPs (≈ 33× increase). As context length grows, the attention component overwhelmingly dominates the total FLOPs due to its S^2 scaling, while the relative contributions of the FFN and lm_head—which scale only linearly with S—shrink substantially.
+(e) Increasing the context length of GPT-2 XL from 1,024 to 16,384 raises the total FLOPs for a single forward pass from about 4.51 trillion to 149.52 trillion FLOPs (≈ 33× increase). As context length grows, the attention component overwhelmingly dominates the total FLOPs due to its S^2 scaling, while the relative contributions of the FFN and lm_head—which scale only linearly with S—shrink substantially.
 | model  | **Attention**   | **FFN (SwiGLU)**  | **LM head**  | **Total** |
 |---|---|---|---|---|
 | GPT-2 XL with S=1,024  | 1.33T(29%)  | 3.02T(67%)  | 79.05B(4%)  | 4.51T  |
