@@ -11,8 +11,9 @@ from torch import Tensor
 
 from cs336_basics.train_bpe import ParallelConfig, train_byte_level_bpe_incremental
 from cs336_basics.tokenizer import Tokenizer
-from cs336_basics.nn.layers import Linear, Embedding, RMSNorm, PositionwiseFeedForward, \
-    RotaryPositionalEmbedding, softmax
+from cs336_basics.nn.layers import Linear, Embedding, RMSNorm, PositionwiseFeedForward
+from cs336_basics.nn.attention import RotaryPositionalEmbedding, softmax, scaled_dot_product_attention,\
+    MultiHeadSelfAttention
 
 def run_linear(
     d_in: int,
@@ -120,7 +121,7 @@ def run_scaled_dot_product_attention(
     Returns:
         Float[Tensor, " ... queries d_v"]: Output of SDPA
     """
-    raise NotImplementedError
+    return scaled_dot_product_attention(Q, K, V, mask)
 
 
 def run_multihead_self_attention(
@@ -154,8 +155,17 @@ def run_multihead_self_attention(
         Float[Tensor, " ... sequence_length d_out"]: Tensor with the output of running your optimized, batched multi-headed attention
         implementation with the given QKV projection weights and input features.
     """
-    raise NotImplementedError
-
+    MHA = MultiHeadSelfAttention(d_model, num_heads, device=in_features.device, dtype=in_features.dtype)
+    
+    result = MHA.load_state_dict({
+        "q_proj.weight": q_proj_weight,
+        "k_proj.weight": k_proj_weight,
+        "v_proj.weight": v_proj_weight,
+        "o_proj.weight": o_proj_weight,
+    })
+    print(result)
+    out = MHA(in_features)
+    return out
 
 def run_multihead_self_attention_with_rope(
     d_model: int,
@@ -194,7 +204,19 @@ def run_multihead_self_attention_with_rope(
         Float[Tensor, " ... sequence_length d_out"]: Tensor with the output of running your optimized, batched multi-headed attention
         implementation with the given QKV projection weights and input features.
     """
-    raise NotImplementedError
+    rope = RotaryPositionalEmbedding(theta, d_model//num_heads, max_seq_len, device=in_features.device)
+
+    MHA = MultiHeadSelfAttention(d_model, num_heads, rope=rope, device=in_features.device, dtype=in_features.dtype)
+    
+    result = MHA.load_state_dict({
+        "q_proj.weight": q_proj_weight,
+        "k_proj.weight": k_proj_weight,
+        "v_proj.weight": v_proj_weight,
+        "o_proj.weight": o_proj_weight,
+    })
+    print(result)
+    out = MHA(in_features, token_positions)
+    return out
 
 
 def run_rope(
