@@ -60,7 +60,7 @@ def run_embedding(
         Float[Tensor, "... d_model"]: Batch of embeddings returned by your Embedding layer.
     """
     embedding_layer = Embedding(vocab_size, d_model, weights.device, weights.dtype)
-    result  = embedding_layer.load_state_dict({"embedding": weights})
+    result  = embedding_layer.load_state_dict({"weight": weights})
     print(result)
     return embedding_layer(token_ids)
     
@@ -162,7 +162,7 @@ def run_multihead_self_attention(
         "q_proj.weight": q_proj_weight,
         "k_proj.weight": k_proj_weight,
         "v_proj.weight": v_proj_weight,
-        "o_proj.weight": o_proj_weight,
+        "output_proj.weight": o_proj_weight,
     })
     print(result)
     out = MHA(in_features)
@@ -213,7 +213,7 @@ def run_multihead_self_attention_with_rope(
         "q_proj.weight": q_proj_weight,
         "k_proj.weight": k_proj_weight,
         "v_proj.weight": v_proj_weight,
-        "o_proj.weight": o_proj_weight,
+        "output_proj.weight": o_proj_weight,
     })
     print(result)
     out = MHA(in_features, token_positions)
