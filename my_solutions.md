@@ -38,7 +38,7 @@ Cell In[50], line 1
 UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected end of data
 ```
 
-### Problem (train_bpe_tinystories): BPE Training on TinyStories
+### Problem (train_bpe_tinystories): BPE Training on TinyStories (2 points)
 (a) It takes me 125.79 seconds and 0.121G memory to train BPE on tinystores. The longest token in the vocab is `'Ġaccomplishment'`, which make sense.  
 (b) The step `_select_pair` function takes the most time, which is 90 seconds. Besides, `_build_word_freq` takes 30 seconds.
 
@@ -47,7 +47,7 @@ UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected
 (a) It takes me 42.39 seconds and 0.219G memory to train BPE on tinystores. The longest token in the vocab is `'Ġaccomplishment'`, which make sense.  
 (b) The step `_build_word_freq` function takes the most time, which is 30 seconds. 
 
-### Problem (train_bpe_expts_owt): BPE Training on OpenWebText
+### Problem (train_bpe_expts_owt): BPE Training on OpenWebText (2 points)
 (a) It takes me 7569 seconds and 24.34 G memory to train BPE, the logs during training can be found at [here](logs/train_bpe_owt_log.txt).   
 <table>
 <tr>
@@ -100,7 +100,7 @@ only OpenWebText: 24681
  - The TinyStories tokenizer learns mostly short, human-readable English word and subword tokens, reflecting the clean, simple, and homogeneous nature of the corpus. 
  - The OpenWebText tokenizer learns a much larger and more diverse vocabulary, including very long byte-level tokens and noisy UTF-8 artifacts, capturing the heterogeneous, messy, and web-scale characteristics of internet text.
 
-### Problem (tokenizer_experiments): Experiments with tokenizers
+### Problem (tokenizer_experiments): Experiments with tokenizers (4 points)
 Below are the outputs produced by from this [script](scripts/tokenizer_experiments.py).
 ```
 ================ problem (a) ================
@@ -122,7 +122,7 @@ Estimated time for 825GB: 58.60 hours (2.44 days)
 
 (d) uint16 is appropriate because it can represent token IDs in the range 0–65535, which safely covers vocabularies of 10K and 32K, while halving storage and I/O cost relative to int32.
 
-### Problem (transformer_accounting): Transformer LM resource accounting
+### Problem (transformer_accounting): Transformer LM resource accounting (5 points)
 Let the model configuration be defined as follows:  
 	•	V: vocabulary size  
 	•	S: sequence length (context length)  
@@ -135,14 +135,17 @@ Let the model configuration be defined as follows:
 
 **FLOPs**
 
-FLOPs = 2·B·S·D·V  
-        + N · (6·B·S·D·F + 8·B·S·D² + 4·B·S²·D)
+$$
+\mathrm{FLOPs}
+=2BSDV+N(4BSDF+8BSD^2+4BS^2D).
+$$
 
 **Number of Trainable Parameters**
 
-#params = 2·V·D  
-          + D  
-          + N · (3·D·F + 4·D² + 2·D)
+$$
+\#\text{params}
+=2VD+D+N(3DF+4D^2+2D).
+$$
 
 *Assumes no weight tying, no bias terms, RMSNorm, and RoPE with no trainable parameters.*
 
@@ -172,6 +175,123 @@ As model size increases, the FFN share grows (about 50% → 60% → 64%) while t
 |---|---|---|---|---|
 | GPT-2 XL with S=1,024  | 1.33T(29%)  | 3.02T(67%)  | 79.05B(4%)  | 4.51T  |
 | GPT-2 XL with S=16,384  | 98.57T(66%)  | 48.32T(32%)  | 2.63T(2%)  | 149.52T  |
+
+### Problem (learning_rate_tuning): Tuning the learning rate (1 point)
+
+1. With a learning rate of 1e1, the loss decreases steadily and remains stable throughout training.
+2. A learning rate of 1e2 causes the loss to drop extremely rapidly to near zero, indicating overly aggressive updates and numerical instability.  
+(At a learning rate of 1e2, the optimizer no longer performs a meaningful gradient descent; instead, the overly large updates push the model into a numerically saturated regime where the loss collapses and gradients effectively vanish, resulting in a degenerate solution rather than true convergence.)
+3. In contrast, a learning rate of 1e3 leads to rapid divergence, with the loss exploding over successive training steps.
+
+| Step | lr = 1e1 | lr = 1e2 | lr = 1e3 |
+|-----:|---------:|---------:|---------:|
+| 1 | 25.99 | 20.35 | 29.11 |
+| 2 | 16.63 | 20.35 | 1.05×10⁴ |
+| 3 | 12.26 | 3.49 | 1.81×10⁶ |
+| 4 | 9.59 | 8.36×10⁻² | 2.02×10⁸ |
+| 5 | 7.77 | 1.94×10⁻¹⁶ | 1.64×10¹⁰ |
+| 6 | 6.44 | 2.17×10⁻¹⁸ | 1.03×10¹² |
+| 7 | 5.43 | 7.30×10⁻²⁰ | 5.30×10¹³ |
+| 8 | 4.64 | 4.35×10⁻²¹ | 2.28×10¹⁵ |
+| 9 | 4.01 | 3.73×10⁻²² | 8.40×10¹⁶ |
+| 10 | 3.49 | 4.14×10⁻²³ | 2.70×10¹⁸ |
+
+![](logs/different_lr_rate.png)
+
+### Problem (adamwAccounting): Resource accounting for training with AdamW (2 points)
+(a) Let 
+- V: vocabulary size
+- N: the number of layers
+- D: the model dimension
+- S: the sequence length
+- B: the batch size
+- F: d_ff which is equal to 4D. 
+
+We assume untied input/output embeddings, RoPE positional encoding, a SiLU-based feed-forward network, RMSNorm without bias, and float32 precision.
+
+#### Parameter-related Memory
+
+The parameter-related memory consists of **model parameters**, **gradients**, and **AdamW optimizer states**. Since gradients and the first- and second-moment estimates have the same shape as the parameters, their memory usage can be expressed as a constant multiple of the number of parameters.
+
+The total number of parameters is approximately
+$P = 2VD + D + N(12D^2 + 2D)$.
+Thus, the peak parameter-side memory required by AdamW (excluding activations) is
+$$
+\text{Parameter-side memory (GB)} \approx
+\frac{4 * 4\big(2VD + D + N(12D^2 + 2D)\big)}{1024^3}
+$$
+ 
+#### Activation Memory
+
+| Level-1 Module | Level-2 Component | Source (Forward Operation) | Purpose in Backward | #Elements |
+|---------------|-------------------|----------------------------|---------------------|-----------|
+| **RMSNorm (per block)** | Pre-attn RMSNorm input | Input to attention RMSNorm | RMSNorm backward | $N \cdot BSD$ |
+| | Pre-FFN RMSNorm input | Input to FFN RMSNorm | RMSNorm backward | $N \cdot BSD$ |
+| **Self-Attention (per block)** | Query (Q) | Linear projection $XW_Q$ | Gradients for $W_Q$ | $N \cdot BSD$ |
+| | Key (K) | Linear projection $XW_K$ | Gradients for $W_K$ | $N \cdot BSD$ |
+| | Value (V) | Linear projection $XW_V$ | Gradients for $W_V$ | $N \cdot BSD$ |
+| | Attention scores | Matrix multiply $QK^\top$ | Softmax backward | $N \cdot BHS^2$ |
+| | Softmax probabilities | $\mathrm{softmax}(QK^\top)$ | Attention backward | $N \cdot BHS^2$ |
+| | Attention output | $\mathrm{softmax}(QK^\top)V$ | Output projection backward | $N \cdot BSD$ |
+| | Output projection output | Linear projection $OW_O$ | Residual / next layer | $N \cdot BSD$ |
+| **Feed-Forward (per block)** | W1 output | First matmul $XW_1$ | SiLU backward | $N \cdot BSF$ |
+| | SiLU activation output | $\mathrm{SiLU}(XW_1)$ | FFN backward | $N \cdot BSF$ |
+| | W2 output | Second matmul | Gradient propagation | $N \cdot BSD$ |
+| **Final RMSNorm** | Final RMSNorm input | Input to final RMSNorm | RMSNorm backward | $BSD$ |
+| **Output Layer** | Logits | Output embedding projection | Cross-entropy backward | $BSV$ |
+| **Cross-Entropy** | CE intermediate | Softmax / log-softmax | CE backward | $cBSV$ ｜
+
+Here, $cBSV$ represents the activation memory used by the cross-entropy loss, where $c$ depends on whether additional softmax or log-softmax tensors are stored. In practice, cross-entropy loss is typically implemented in a fused manner, reusing the logits produced by the output layer and not storing extra intermediate tensors, so $c = 0$.
+
+$$
+\text{Activation memory (GB)} \approx
+\frac{4\left[N(16BSD + 2BHS^2) + BSD + BSV\right]}{1024^3}.
+$$
+
+(b) Mem(GB) = 24.37 + 14.26 * Batch_size, the maximum batch size you can use and still fit within 80GB memory is floor(3.9) = 3.
+
+(c) We count add/mul/div/sqrt as 1 FLOP each and ignore the cost of bias-correction scalars
+(computed once per step, not per parameter).
+
+| Step | Update Equation | FLOPs (per parameter) |
+|------|------------------|-----------------------|
+| First moment | $$m \leftarrow \beta_1 m + (1-\beta_1) g$$ | $$3$$ |
+| Second moment | $$v \leftarrow \beta_2 v + (1-\beta_2) g^2$$ | $$4$$ |
+| Normalize & update | $$p \leftarrow p - \alpha_t \frac{m}{\sqrt{v}+\epsilon}$$ | $$5$$ |
+| Weight decay | $$p \leftarrow p - \alpha \lambda p \;$$ | $$1$$ |
+| **Total** |  | $$\approx 13$$ |
+
+**Overall:** for \(P\) parameters,
+$$
+\text{FLOPs}_{\text{AdamW}} \approx 13P = \Theta(P).
+$$
+
+(d) We assume untied input/output embeddings, RoPE positional encoding, a SiLU-based feed-forward network, RMSNorm without bias.
+
+$$
+\mathrm{FLOPs}_{\text{forward}}
+=2BSDV+N(4BSDF+8BSD^2+4BS^2D).
+$$
+
+FLOPs(forward) = 3591T
+
+FLOPs(forward + backward) = 3 x 3591 = 10773T
+$$
+\#\text{params}
+=2VD+D+N(2DF+4D^2+2D).
+$$
+
+FLOPs(AdamW) = 13 * #params = 0.02T 
+
+total FLOPs = 10773T
+
+$$
+\text{total days}
+=\frac{10773 \times 400000}
+{0.5 \times 19.5 \times 3600 \times 24}
+=5120.
+$$
+
 
 
 
