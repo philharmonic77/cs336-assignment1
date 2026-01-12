@@ -9,8 +9,8 @@ from dataclasses import dataclass
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 
-from cs336_basics.chunking import _find_chunk_boundaries
-from cs336_basics.pretokenize import _chunk_to_word_freq, compile_special_pattern
+from cs336_basics.text.chunking import _find_chunk_boundaries
+from cs336_basics.text.pretokenize import _chunk_to_word_freq, compile_special_pattern
 
 
 @dataclass(frozen=True)

@@ -6,8 +6,8 @@ from pathlib import Path
 import json
 import sys
 
-from cs336_basics.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
-from cs336_basics.gpt2_bytes import bytes_to_gpt2_str
+from cs336_basics.text.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
+from cs336_basics.text.gpt2_bytes import bytes_to_gpt2_str
 from scripts.bpe_verify import verify_tokenizer_roundtrip
 
 def _bytes_to_str(b: bytes) -> str:

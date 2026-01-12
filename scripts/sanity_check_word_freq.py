@@ -2,7 +2,7 @@ import regex as re
 import time
 import statistics
 
-from cs336_basics.train_bpe import _build_word_freq, ParallelConfig
+from cs336_basics.text.train_bpe import _build_word_freq, ParallelConfig
 
 DATA_PATH = "data/TinyStoriesV2-GPT4-valid.txt"
 

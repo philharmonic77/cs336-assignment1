@@ -1,4 +1,4 @@
-from cs336_basics.tokenizer import Tokenizer
+from cs336_basics.text.tokenizer import Tokenizer
 from pathlib import Path
 import random
 import time

@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable
 
-from cs336_basics.tokenizer import Tokenizer
+from cs336_basics.text.tokenizer import Tokenizer
 
 
 def _expected_id_to_bytes(

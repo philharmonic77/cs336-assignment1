@@ -1,7 +1,7 @@
 import cProfile
 import pstats
 
-from cs336_basics.train_bpe import train_byte_level_bpe
+from cs336_basics.text.train_bpe import train_byte_level_bpe
 from tests.common import FIXTURES_PATH
 
 

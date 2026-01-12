@@ -9,15 +9,15 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
-from cs336_basics.train_bpe import ParallelConfig, train_byte_level_bpe_incremental
-from cs336_basics.tokenizer import Tokenizer
+from cs336_basics.text.train_bpe import ParallelConfig, train_byte_level_bpe_incremental
+from cs336_basics.text.tokenizer import Tokenizer
 from cs336_basics.nn.layers import Linear, Embedding, RMSNorm, PositionwiseFeedForward
 from cs336_basics.nn.attention import RotaryPositionalEmbedding, softmax, scaled_dot_product_attention,\
     MultiHeadSelfAttention
 from cs336_basics.nn.transformer import TransformerBlock, TransformerLM
 from cs336_basics.losses import cross_entropy
 from cs336_basics.optim import AdamW, learning_rate_schedule
-from cs336_basics.training import gradient_clipping
+from cs336_basics.training.grad_utils import gradient_clipping
 
 def run_linear(
     d_in: int,
