@@ -10,8 +10,8 @@ def gpt2_bytes_to_unicode() -> dict[int, str]:
     """
     bs = (
         list(range(ord("!"), ord("~") + 1))
-        + list(range(ord("¡"), ord("¬") + 1))
-        + list(range(ord("®"), ord("ÿ") + 1))
+        + list(range(161, 173))
+        + list(range(174, 256))
     )
     cs = bs[:]
     n = 0

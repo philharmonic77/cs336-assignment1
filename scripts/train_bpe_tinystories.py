@@ -3,18 +3,10 @@ import cProfile
 import pstats
 import resource
 from pathlib import Path
-import json
 import sys
 
-from cs336_basics.text.train_bpe import train_byte_level_bpe_incremental, ParallelConfig
-from cs336_basics.text.gpt2_bytes import bytes_to_gpt2_str
-from scripts.bpe_verify import verify_tokenizer_roundtrip
-
-def _bytes_to_str(b: bytes) -> str:
-    """
-    GPT-2 byte-to-unicode mapping for readable, reversible serialization.
-    """
-    return bytes_to_gpt2_str(b)
+from cs336_basics.text.bpe_runner import train_bpe_and_save
+from cs336_basics.text.train_bpe import ParallelConfig
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
@@ -28,39 +20,17 @@ def main() -> None:
     profiler.enable()
 
     start = time.perf_counter()
-    vocab, merges = train_byte_level_bpe_incremental(
-        input_path=str(repo_root / "data" / "TinyStoriesV2-GPT4-train.txt"),
+    train_bpe_and_save(
+        input_path=repo_root / "data" / "TinyStoriesV2-GPT4-train.txt",
         vocab_size=10000,
+        output_dir=repo_root / "artifacts" / "bpe",
+        vocab_filename="tinystories_vocab.json",
+        merges_filename="tinystories_merges.txt",
         special_tokens=["<|endoftext|>"],
-        parallel=cfg
+        parallel=cfg,
     )
     end = time.perf_counter()
     print(f"\nElapsed time: {end - start:.6f} seconds")
-
-    output_dir = repo_root / "artifacts" / "bpe"
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    vocab_out = {str(idx): _bytes_to_str(tok) for idx, tok in vocab.items()}
-    with open(output_dir / "tinystories_vocab.json", "w", encoding="utf-8") as f:
-        json.dump(vocab_out, f, ensure_ascii=True, separators=(",", ":"))
-
-    longest_id, longest_tok = max(vocab.items(), key=lambda kv: len(kv[1]))
-    print(
-        f"Longest token: id={longest_id} len={len(longest_tok)} "
-        f"token={_bytes_to_str(longest_tok)!r}"
-    )
-
-    with open(output_dir / "tinystories_merges.txt", "w", encoding="utf-8") as f:
-        for a, b in merges:
-            f.write(f"{_bytes_to_str(a)} {_bytes_to_str(b)}\n")
-
-    verify_tokenizer_roundtrip(
-        vocab=vocab,
-        merges=merges,
-        vocab_path=output_dir / "tinystories_vocab.json",
-        merges_path=output_dir / "tinystories_merges.txt",
-        special_tokens=["<|endoftext|>"],
-    )
 
     peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     print(f"Platform: {sys.platform}, ru_maxrss: {peak}")

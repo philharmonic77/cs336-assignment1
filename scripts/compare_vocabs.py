@@ -1,7 +1,7 @@
 import json
 from collections import Counter
 
-from cs336_basics.text.gpt2_bytes import bytes_to_gpt2_str, gpt2_str_to_bytes
+from cs336_basics.text.codec import bytes_to_gpt2_str, gpt2_str_to_bytes
 
 def load_vocab(path):
     with open(path, "r", encoding="utf-8") as f:
