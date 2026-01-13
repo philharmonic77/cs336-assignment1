@@ -9,8 +9,9 @@ import numpy.typing as npt
 def get_batch(x: npt.NDArray,
                  batch_size: int,
                  context_length: int,
-                 device: str) -> tuple[Int[Tensor, "B S"], Int[Tensor, "B S"]]:
-    
+                 device: torch.device | str) -> tuple[Int[Tensor, "B S"], Int[Tensor, "B S"]]:
+
+    device = torch.device(device)
     if x.ndim != 1:
         raise ValueError(f"x must be 1D, got shape {x.shape}")
     if batch_size <= 0 or context_length <= 0:
