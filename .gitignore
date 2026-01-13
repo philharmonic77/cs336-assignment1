@@ -166,4 +166,19 @@ cython_debug/
 .vscode/
 .DS_Store
 /data/
-artifacts/tokenized
+artifacts/tokenized/
+*.npy
+*.npz
+
+# =========================
+# Experiment outputs
+# =========================
+runs/
+outputs/
+checkpoints/
+logs/
+
+# =========================
+# Weights & Biases
+# =========================
+wandb/
