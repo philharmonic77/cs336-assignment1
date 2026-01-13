@@ -48,17 +48,17 @@ UnicodeDecodeError: 'utf-8' codec can't decode bytes in position 0-1: unexpected
 (b) The step `_build_word_freq` function takes the most time, which is 30 seconds. 
 
 ### Problem (train_bpe_expts_owt): BPE Training on OpenWebText (2 points)
-(a) It takes me 7569 seconds and 24.34 G memory to train BPE, the logs during training can be found at [here](logs/train_bpe_owt_log.txt).   
+(a) It takes me 7569 seconds and 24.34 G memory to train BPE, the logs during training can be found at [here](assets/train_bpe_owt_log.txt).   
 <table>
 <tr>
 <td>
 
-![vocab size vs time](logs/train_bpe_owt_figure_speed.jpeg)
+![vocab size vs time](assets/train_bpe_owt_figure_speed.jpeg)
 
 </td>
 <td>
 
-![vocab size vs pair size](logs/train_bpe_owt_figure_vocab_vs_pair.jpeg)
+![vocab size vs pair size](assets/train_bpe_owt_figure_vocab_vs_pair.jpeg)
 
 </td>
 </tr>
@@ -196,7 +196,7 @@ As model size increases, the FFN share grows (about 50% → 60% → 64%) while t
 | 9 | 4.01 | 3.73×10⁻²² | 8.40×10¹⁶ |
 | 10 | 3.49 | 4.14×10⁻²³ | 2.70×10¹⁸ |
 
-![](logs/different_lr_rate.png)
+![](assets/different_lr_rate.png)
 
 ### Problem (adamwAccounting): Resource accounting for training with AdamW (2 points)
 (a) Let 
@@ -313,4 +313,3 @@ $$
      - 从 str + encoding 编码
 
      
-
