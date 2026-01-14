@@ -31,7 +31,7 @@ def init_wandb(cfg: dict[str, Any], out_dir: Path, run_name: str) -> Optional[An
         "name": run_name,
         "config": cfg,
         "mode": mode,
-        "dir": str(wcfg.get("dir") or (out_dir / "wandb")),
+        "dir": str(wcfg.get("dir") or out_dir),
     }
 
     entity = wcfg.get("entity")
