@@ -13,7 +13,7 @@ from cs336_basics.data import get_batch
 from cs336_basics.nn.transformer import TransformerLM
 from cs336_basics.losses import cross_entropy
 from cs336_basics.optim import AdamW
-from cs336_basics.training.grad_utils import gradient_clipping
+from cs336_basics.training.grad_utils import gradient_clipping, compute_grad_l2_norm
 from cs336_basics.training.scheduler import learning_rate_schedule
 from cs336_basics.training.serialization import save_checkpoint, load_checkpoint
 from cs336_basics.training import init_wandb, apply_overrides, save_run_config
@@ -142,8 +142,8 @@ def train(cfg: dict[str, Any]) -> None:
 
     # 5) loop
 
-    last_log_t = time.perf_counter()
-    last_log_it = start_iter
+    train_tokens_since_log = 0
+    train_time_since_log = 0.0
 
     for it in range(start_iter, max_iters):
 
@@ -158,6 +158,8 @@ def train(cfg: dict[str, Any]) -> None:
             for group in optimizer.param_groups:
                 group["lr"] = lr_t
 
+        step_t0 = time.perf_counter()
+
         x, y = get_batch(train_tokens, B, S, device) 
             
         optimizer.zero_grad(set_to_none=True)
@@ -165,10 +167,15 @@ def train(cfg: dict[str, Any]) -> None:
         loss = cross_entropy(logits, y)
         loss.backward()
 
+        grad_norm = None
         if max_norm is not None:
-            gradient_clipping(model.parameters(), max_norm)
+            grad_norm = gradient_clipping(model.parameters(), max_norm)
 
         optimizer.step()
+
+        step_t1 = time.perf_counter()
+        train_time_since_log += (step_t1 - step_t0)
+        train_tokens_since_log += B * S
 
         # 6) eval、log、save ckpt
 
@@ -176,23 +183,15 @@ def train(cfg: dict[str, Any]) -> None:
         do_eval = (eval_interval > 0) and ((it + 1) % eval_interval == 0)
         if do_log or do_eval:
             lr = optimizer.param_groups[0]["lr"]
+            if grad_norm is None:
+                grad_norm = compute_grad_l2_norm(model.parameters())
+
             metrics = {
                 "iter": it + 1,
                 "train/loss": float(loss.item()),
                 "train/lr": float(lr),
+                "grad/grad_norm": grad_norm
             }
-
-            now = time.perf_counter()
-            dt = now - last_log_t
-            dsteps = (it + 1) - last_log_it
-
-            tokens_per_step = B * S
-            tokens_per_sec = (dsteps * tokens_per_step) / max(dt, 1e-12)
-
-            metrics["perf/tokens_per_sec"] = float(tokens_per_sec)
-
-            last_log_t = now
-            last_log_it = it + 1
 
             if do_eval:
                 valid_loss, valid_ppl = evaluate(
@@ -209,24 +208,34 @@ def train(cfg: dict[str, Any]) -> None:
                 })
 
             if do_log:
+
+                tok_s = train_tokens_since_log / max(train_time_since_log, 1e-12)
+                metrics["perf/tokens_per_sec"] = float(tok_s)
+                
+                train_tokens_since_log = 0
+                train_time_since_log = 0.0
+
                 msg = (
-                    f"[{run_name}] iter={it+1} "
-                    f"train_loss={metrics['train/loss']:.6f} "
-                    f"lr={metrics['train/lr']:.3e} "
-                    f"tok/s={metrics['perf/tokens_per_sec']:.0f}"
+                    f"[{run_name}] "
+                    f"iter={it+1:6d} "
+                    f"train_loss={metrics['train/loss']:9.6f} "
+                    f"lr={metrics['train/lr']:10.3e} "
+                    f"tok/s={metrics['perf/tokens_per_sec']:7.0f} "
+                    f"grad_norm={metrics['grad/grad_norm']:9.2e}"
                 )
                 if do_eval:
                     msg += (
-                        f" | valid_loss={metrics['valid/loss']:.6f} "
-                        f"valid_ppl={metrics['valid/ppl']:.3f}"
+                        f" | valid_loss={metrics['valid/loss']:9.6f} "
+                        f"valid_ppl={metrics['valid/ppl']:10.3f}"
                     )
                 print(msg)                
 
             elif do_eval:
                 print(
-                    f"[{run_name}] iter={it+1} "
-                    f"valid_loss={metrics['valid/loss']:.6f} "
-                    f"valid_ppl={metrics['valid/ppl']:.3f}"
+                    f"[{run_name}] "
+                    f"iter={it+1:6d} "
+                    f"valid_loss={metrics['valid/loss']:9.6f} "
+                    f"valid_ppl={metrics['valid/ppl']:10.3f}"
                 )
 
             if run is not None:
