@@ -142,6 +142,7 @@ def train(cfg: dict[str, Any]) -> None:
 
     # 5) loop
 
+    t_train_start = time.perf_counter()
     train_tokens_since_log = 0
     train_time_since_log = 0.0
 
@@ -186,14 +187,19 @@ def train(cfg: dict[str, Any]) -> None:
             if grad_norm is None:
                 grad_norm = compute_grad_l2_norm(model.parameters())
 
+            elapsed_sec = time.perf_counter() - t_train_start
+
             metrics = {
                 "iter": it + 1,
                 "train/loss": float(loss.item()),
                 "train/lr": float(lr),
-                "grad/grad_norm": grad_norm
+                "grad/grad_norm": grad_norm,
+                "time/elapsed_sec": float(elapsed_sec),
             }
 
             if do_eval:
+
+                t_eval0 = time.perf_counter()
                 valid_loss, valid_ppl = evaluate(
                     model=model,
                     tokens=valid_tokens,
@@ -202,9 +208,12 @@ def train(cfg: dict[str, Any]) -> None:
                     device=device,
                     num_batches=eval_batches,
                 )
+                t_eval1 = time.perf_counter()
+
                 metrics.update({
                     "valid/loss": valid_loss,
                     "valid/ppl": valid_ppl,
+                    "time/eval_sec": float(t_eval1 - t_eval0),
                 })
 
             if do_log:
