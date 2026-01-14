@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import numpy as np
 import math
+import time
 from pathlib import Path
 import shutil
 import random
@@ -141,6 +142,9 @@ def train(cfg: dict[str, Any]) -> None:
 
     # 5) loop
 
+    last_log_t = time.perf_counter()
+    last_log_it = start_iter
+
     for it in range(start_iter, max_iters):
 
         if scfg["type"] == "cosine":
@@ -178,6 +182,18 @@ def train(cfg: dict[str, Any]) -> None:
                 "train/lr": float(lr),
             }
 
+            now = time.perf_counter()
+            dt = now - last_log_t
+            dsteps = (it + 1) - last_log_it
+
+            tokens_per_step = B * S
+            tokens_per_sec = (dsteps * tokens_per_step) / max(dt, 1e-12)
+
+            metrics["perf/tokens_per_sec"] = float(tokens_per_sec)
+
+            last_log_t = now
+            last_log_it = it + 1
+
             if do_eval:
                 valid_loss, valid_ppl = evaluate(
                     model=model,
@@ -196,7 +212,8 @@ def train(cfg: dict[str, Any]) -> None:
                 msg = (
                     f"[{run_name}] iter={it+1} "
                     f"train_loss={metrics['train/loss']:.6f} "
-                    f"lr={metrics['train/lr']:.3e}"
+                    f"lr={metrics['train/lr']:.3e} "
+                    f"tok/s={metrics['perf/tokens_per_sec']:.0f}"
                 )
                 if do_eval:
                     msg += (
