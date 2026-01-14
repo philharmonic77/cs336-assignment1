@@ -5,6 +5,8 @@ import math
 from pathlib import Path
 import shutil
 import random
+import argparse
+import importlib.util
 from typing import Any, Optional
 from cs336_basics.data import get_batch
 from cs336_basics.nn.transformer import TransformerLM
@@ -13,7 +15,7 @@ from cs336_basics.optim import AdamW
 from cs336_basics.training.grad_utils import gradient_clipping
 from cs336_basics.training.scheduler import learning_rate_schedule
 from cs336_basics.training.serialization import save_checkpoint, load_checkpoint
-from cs336_basics.training import init_wandb
+from cs336_basics.training import init_wandb, apply_overrides, save_run_config
 
 _DTYPE_MAP: dict[str, torch.dtype] = {
     "float32": torch.float32,
@@ -27,6 +29,17 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+def load_py_config(path: str) -> dict[str, Any]:
+    p = Path(path)
+    spec = importlib.util.spec_from_file_location("user_cfg", str(p))
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    cfg = getattr(mod, "cfg", None)
+    if not isinstance(cfg, dict):
+        raise ValueError(f"{path} must define a dict variable named `cfg`")
+    return cfg
 
 def train(cfg: dict[str, Any]) -> None:
 
@@ -241,60 +254,19 @@ def evaluate(
 
 
 
-if __name__ == "__main__":
-    cfg = {
-        "data": {
-            "train_token_npy_path": "artifacts/tokenized/tinystories_train.npy",
-            "valid_token_npy_path": "artifacts/tokenized/tinystories_valid.npy",
-            "batch_size": 4,
-            "context_length": 128
-        },
-        "training": {
-            "seed": 1234,
-            "resume_from": None,
-            "max_iters": 400,
-            "device": "cpu",
-            "dtype": "float32",
-            "grad_clip": {
-                "max_norm": 10000
-            },
-            "schedule": {
-                "type": "cosine",
-                "T_w": 0,
-                "T_c": 1000,
-                "alpha_min": 0.0
-            },
-            "eval_interval": 50,
-            "eval_batches": 10,
-        },
-        "model": {
-            "vocab_size": 32000,
-            "d_model": 16,
-            "num_layers": 2,
-            "num_heads": 4,
-            "d_ff": 64,
-            "rope": {
-                "theta": 100000
-            }
-        },
-        "optim": {
-            "lr": 1e-3,
-            "betas": (0.9,0.999),
-            "eps": 1e-8,
-            "weight_decay": 0.0
-        },
-        "io": {
-            "out_dir": "runs/exp_lr1e-3_bs64",
-            "run_name": "lr1e-3_bs64",
-            "log_interval": 10,
-            "save_interval": 200,
-            "wandb": {
-                "enabled": True,
-                "project": "cs336-assignment1",
-                "mode": "online",
-                "tags": ["tinystories", "baseline"],
-            },
-        }
-    }
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", required=True)
+    ap.add_argument("--override", nargs="*", default=[])  # 允许传 0~多个 override
+    args = ap.parse_args()
+
+    cfg = load_py_config(args.config)
+    cfg = apply_overrides(cfg, args.override)
+
+    out_dir = Path(cfg["io"]["out_dir"])
+    save_run_config(out_dir, cfg, overrides=args.override)
 
     train(cfg)
+
+if __name__ == "__main__":
+    main()
