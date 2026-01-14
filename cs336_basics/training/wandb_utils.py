@@ -6,7 +6,7 @@ from typing import Any, Optional
 import wandb
 
 
-def init_wandb(cfg: dict[str, Any], out_dir: Path, run_name: str) -> Optional[wandb.sdk.wandb_run.Run]:
+def init_wandb(cfg: dict[str, Any], out_dir: Path, run_name: str) -> Optional[Any]:
     """
     Initialize a Weights & Biases run if enabled in cfg["io"]["wandb"].
 
