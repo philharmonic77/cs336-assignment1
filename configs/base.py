@@ -1,10 +1,12 @@
 cfg = {
     "data": {
-        "token_npy_path": "artifacts/tokenized/tinystories_valid.npy",
+        "train_token_npy_path": "artifacts/tokenized/tinystories_train.npy",
+        "valid_token_npy_path": "artifacts/tokenized/tinystories_valid.npy",
         "batch_size": 4,
         "context_length": 128
     },
     "training": {
+        "seed": 1234,
         "resume_from": None,
         "max_iters": 400,
         "device": "cpu",
@@ -15,9 +17,11 @@ cfg = {
         "schedule": {
             "type": "cosine",
             "T_w": 0,
-            "T_c": 400_000,
+            "T_c": 1000,
             "alpha_min": 0.0
         },
+        "eval_interval": 50,
+        "eval_batches": 10,
     },
     "model": {
         "vocab_size": 32000,
@@ -43,11 +47,8 @@ cfg = {
         "wandb": {
             "enabled": True,
             "project": "cs336-assignment1",
-            "entity": None,         
-            "mode": "online",       
-            "tags": [],
-            "notes": "",
-            "resume": "allow"      
-        }
+            "mode": "offline",
+            "tags": ["tinystories", "baseline"],
+        },
     }
 }
