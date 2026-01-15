@@ -143,7 +143,7 @@ $$
 **Number of Trainable Parameters**
 
 $$
-\#\text{params}
+\text{params}
 =2VD+D+N(3DF+4D^2+2D).
 $$
 
