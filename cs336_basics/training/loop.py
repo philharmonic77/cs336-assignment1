@@ -4,11 +4,9 @@ import numpy as np
 import math
 import time
 from pathlib import Path
-import shutil
 import json
 import random
 import argparse
-import importlib.util
 from typing import Any, Optional
 from cs336_basics.data import get_batch
 from cs336_basics.nn.transformer import TransformerLM
@@ -17,7 +15,7 @@ from cs336_basics.optim import AdamW
 from cs336_basics.training.grad_utils import gradient_clipping, compute_grad_l2_norm
 from cs336_basics.training.scheduler import learning_rate_schedule
 from cs336_basics.training.serialization import save_checkpoint, load_checkpoint
-from cs336_basics.training import init_wandb, apply_overrides, save_run_config
+from cs336_basics.training import init_wandb, apply_overrides, save_run_config, load_py_config
 
 _DTYPE_MAP: dict[str, torch.dtype] = {
     "float32": torch.float32,
@@ -32,16 +30,6 @@ def set_seed(seed: int) -> None:
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
-def load_py_config(path: str) -> dict[str, Any]:
-    p = Path(path)
-    spec = importlib.util.spec_from_file_location("user_cfg", str(p))
-    assert spec and spec.loader
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    cfg = getattr(mod, "cfg", None)
-    if not isinstance(cfg, dict):
-        raise ValueError(f"{path} must define a dict variable named `cfg`")
-    return cfg
 
 def train(cfg: dict[str, Any]) -> None:
 
@@ -139,7 +127,7 @@ def train(cfg: dict[str, Any]) -> None:
     # 4) resume
 
     if resume_from is not None:
-        start_iter = load_checkpoint(resume_from, model, optimizer)
+        start_iter = load_checkpoint(resume_from, model, optimizer, device=device)
         model.train()
 
     # 5) loop
