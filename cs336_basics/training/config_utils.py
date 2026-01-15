@@ -3,6 +3,18 @@ from copy import deepcopy
 from typing import Any
 from pathlib import Path
 from typing import Any
+import importlib.util
+
+def load_py_config(path: str) -> dict[str, Any]:
+    p = Path(path)
+    spec = importlib.util.spec_from_file_location("user_cfg", str(p))
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    cfg = getattr(mod, "cfg", None)
+    if not isinstance(cfg, dict):
+        raise ValueError(f"{path} must define a dict variable named `cfg`")
+    return cfg
 
 def _parse(s: str) -> Any:
     sl = s.lower()
