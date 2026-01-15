@@ -216,6 +216,7 @@ The parameter-related memory consists of **model parameters**, **gradients**, an
 The total number of parameters is approximately
 $P = 2VD + D + N(12D^2 + 2D)$.
 Thus, the peak parameter-side memory required by AdamW (excluding activations) is
+
 $$
 \text{Parameter-side memory (GB)} \approx
 \frac{4 * 4\big(2VD + D + N(12D^2 + 2D)\big)}{1024^3}
