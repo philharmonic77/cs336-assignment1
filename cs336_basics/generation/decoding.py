@@ -39,15 +39,15 @@ def generate_sample(
     runs_path: Path,
     run_name: str,
     ckpt_name: str = "latest.pt",
+    sample_cfg: SamplingConfig | None= None,
     device: torch.device | str = torch.device("cuda:0"),
     random_seed: int = 1234
 ):
     # 1) prepare model
 
-    f = open(runs_path / run_name / "config.json", "r")
-    cfg = json.load(f)
+    with open(runs_path / run_name / "config.json", "r") as f:
+        cfg = json.load(f)
     mcfg = cfg["model"]
-    ocfg = cfg["optim"]
     S = int(cfg["data"]["context_length"]) 
 
     model = TransformerLM(
@@ -59,23 +59,20 @@ def generate_sample(
         d_ff=mcfg["d_ff"],
         rope_theta=mcfg["rope"]["theta"]
     )
-    optimizer = AdamW(
-        model.parameters(),
-        lr=ocfg["lr"],
-        betas=ocfg["betas"],
-        eps=ocfg["eps"],
-        weight_decay=ocfg["weight_decay"],
-    ) 
 
     # 2) load state
+    device = torch.device(device)
     ckpt_path = runs_path / run_name / "ckpt" / ckpt_name
-    load_checkpoint(ckpt_path, model, optimizer, device)
+    load_checkpoint(ckpt_path, model, optimizer=None, device="cpu")
+    model.to(device)
 
     # 3) encode -> generate -> decode
-    prompt_ids = torch.tensor(tokenizer.encode(prompt), dtype=torch.long)
+    prompt_ids = torch.tensor(tokenizer.encode(prompt), dtype=torch.long, device=device)
 
-    sample_cfg = SamplingConfig()
     gen = torch.Generator(device=device).manual_seed(random_seed)
+
+    if sample_cfg is None:
+        sample_cfg = SamplingConfig()
     new_tokens = generate(model, prompt_ids, sample_cfg, gen).detach().cpu().tolist()
 
     out = tokenizer.decode(new_tokens)
@@ -84,44 +81,42 @@ def generate_sample(
 @torch.no_grad()
 def generate(
     model: nn.Module,
-    prompt_ids: Int[Tensor, "(S, )"],
+    prompt_ids: Int[Tensor, "(S,)"],
     cfg: SamplingConfig,
     generator: Optional[torch.Generator] = None,
 ) -> torch.Tensor:
-    
     if prompt_ids.ndim != 1:
-        raise ValueError(f"prompt_ids must be (S, ), got {tuple(prompt_ids.shape)}")
+        raise ValueError(f"prompt_ids must be (S,), got {tuple(prompt_ids.shape)}")
     if cfg.max_new_tokens <= 0:
         return prompt_ids
-    
+
     ctx = getattr(model, "context_length", None)
     if not isinstance(ctx, int):
         raise ValueError("model must have int attribute `context_length`")
 
-    was_training = model.training 
+    was_training = model.training
+    model.eval()
 
-    model.eval()    
     out = prompt_ids.clone()
-    
+
     for _ in range(cfg.max_new_tokens):
-        if out.size(0) > ctx: 
-            input_ids = out[-ctx:]
-        else:
-            input_ids = out
-        logits: Float[Tensor, "S V"] = model(input_ids)
-        next_logit: Float[Tensor, "V"] = logits[-1, :]
+        input_ids = out[-ctx:] if out.size(0) > ctx else out
+        input_ids_2d = input_ids.unsqueeze(0)          # [1, S]
+
+        logits = model(input_ids_2d)                   # [1, S, V]
+        next_logit = logits[0, -1, :]                  # [V]
 
         next_token = sample_next_token(
             next_logit,
             temperature=cfg.temperature,
             top_p=cfg.top_p,
-            generator=generator)
+            generator=generator,
+        )                                              # [1]
 
-        out = torch.concat([out, next_token], dim=0)
+        out = torch.cat([out, next_token], dim=0)
 
-        if cfg.eos_token_id is not None:
-            if next_token == cfg.eos_token_id:
-                break
+        if cfg.eos_token_id is not None and int(next_token.item()) == int(cfg.eos_token_id):
+            break
 
     if was_training:
         model.train()
@@ -139,7 +134,7 @@ def sample_next_token(
         raise ValueError(f"logits must be (V, ), got {tuple(logits.shape)}")
 
     if temperature <= 0:
-        return torch.argmax(logits, dim=-1, keepdim=True) # (1, )
+        return torch.argmax(logits, dim=-1, keepdim=True).view(1)   # shape (1,) 
     
     logits = logits / temperature
 
@@ -150,7 +145,7 @@ def sample_next_token(
     probs = softmax(masked_logits, dim=-1)
 
     next_token = torch.multinomial(probs, num_samples=1, generator=generator)
-    return next_token
+    return next_token.view(1)  # ensure shape (1,)
 
 
 def top_p_filtering(logits: torch.Tensor, top_p: float) -> torch.Tensor:
@@ -192,11 +187,18 @@ if __name__ == '__main__':
                                                 str(TS_merges_path),
                                                 special_tokens=["<|endoftext|>"])
 
+    eos_ids = tinystories_tokenizer.encode("<|endoftext|>")
+    if len(eos_ids) != 1:
+        raise ValueError(f"Expected <|endoftext|> to be 1 token, got {eos_ids}")
+    eos_id = eos_ids[0]
+
+    sample_cfg = SamplingConfig(eos_token_id=eos_id)
 
     out = generate_sample(tinystories_tokenizer,
-                           "Let's play games!",
-                           repo_root / "runs",
-                           "exp_lr3e-4_bs128",
+                           prompt="Let's play games!",
+                           runs_path=repo_root / "runs",
+                           run_name="exp_lr3e-4_bs128",
+                           sample_cfg=sample_cfg,
                            device="cpu",
                            random_seed=2345
                            )
