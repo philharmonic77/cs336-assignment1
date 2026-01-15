@@ -40,8 +40,8 @@ cfg = {
         "weight_decay": 0.1
     },
     "io": {
-        "out_dir": "runs/exp_lr1e-3_bs16_norm0_decay0",
-        "run_name": "lr1e-3_bs16_norm0_decay0",
+        "out_dir": "runs/exp_lr3e-4_bs128",
+        "run_name": "exp_lr3e-4_bs128",
         "log_interval": 10,
         "save_interval": 200,
         "wandb": {
