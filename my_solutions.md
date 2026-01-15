@@ -280,7 +280,7 @@ FLOPs(forward) = 3591T
 FLOPs(forward + backward) = 3 x 3591 = 10773T
 
 $$
-\#\text{params}
+\text{params}
 =2VD+D+N(2DF+4D^2+2D).
 $$
 
