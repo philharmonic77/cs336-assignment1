@@ -72,7 +72,7 @@ def train(cfg: dict[str, Any]) -> None:
     B: int = int(dcfg["batch_size"])
     S: int = int(dcfg["context_length"]) 
 
-    # 1.2) build model/optim
+    # 1.2) build model/optim, count #param
 
     model = TransformerLM(
         vocab_size=mcfg["vocab_size"],
@@ -83,6 +83,7 @@ def train(cfg: dict[str, Any]) -> None:
         d_ff=mcfg["d_ff"],
         rope_theta=mcfg["rope"]["theta"]
     )
+    count_params(model)
 
     optimizer = AdamW(
         model.parameters(),
@@ -287,6 +288,22 @@ def evaluate(
     return mean_loss, ppl
     
 
+def count_params(model: nn.Module):
+    print("+++++++++++++++++++ #Parms INFO +++++++++++++++++++")
+    total_params = sum(p.numel() for p in model.parameters(recurse=True))
+    trainable_params = sum(p.numel() for p in model.parameters(recurse=True) if p.requires_grad)
+    print(f"total params: {total_params}")
+    print(f"trainable params: {trainable_params}")
+    print("params by module:")
+    for name, module in model.named_children():
+        module_params = sum(p.numel() for p in module.parameters(recurse=True))
+        module_trainable = sum(
+            p.numel() for p in module.parameters(recurse=True) if p.requires_grad
+        )
+        print(
+            f"  {name}: total={module_params} trainable={module_trainable}"
+        )
+    print("+++++++++++++++++++ #Params END +++++++++++++++++++")
 
 
 def main():

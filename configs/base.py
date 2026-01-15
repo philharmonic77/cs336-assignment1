@@ -2,52 +2,52 @@ cfg = {
     "data": {
         "train_token_npy_path": "artifacts/tokenized/tinystories_train.npy",
         "valid_token_npy_path": "artifacts/tokenized/tinystories_valid.npy",
-        "batch_size": 4,
-        "context_length": 128
+        "batch_size": 128,
+        "context_length": 256
     },
     "training": {
         "seed": 1234,
         "resume_from": None,
-        "max_iters": 400,
-        "device": "cpu",
+        "max_iters": 10000,
+        "device": "cuda:0",
         "dtype": "float32",
         "grad_clip": {
-            "max_norm": 10000
+            "max_norm": 1.0
         },
         "schedule": {
             "type": "cosine",
-            "T_w": 0,
-            "T_c": 1000,
-            "alpha_min": 0.0
+            "T_w": 500,
+            "T_c": 10000,
+            "alpha_min": 3e-5
         },
-        "eval_interval": 50,
-        "eval_batches": 10,
+        "eval_interval": 100,
+        "eval_batches": 128,
     },
     "model": {
-        "vocab_size": 32000,
-        "d_model": 16,
-        "num_layers": 2,
-        "num_heads": 4,
-        "d_ff": 64,
+        "vocab_size": 10000,
+        "d_model": 512,
+        "num_layers": 4,
+        "num_heads": 16,
+        "d_ff": 1344,
         "rope": {
-            "theta": 100000
+            "theta": 10000
         }
     },
     "optim": {
-        "lr": 1e-3,
-        "betas": (0.9,0.999),
+        "lr": 3e-4,
+        "betas": (0.9,0.95),
         "eps": 1e-8,
-        "weight_decay": 0.0
+        "weight_decay": 0.1
     },
     "io": {
-        "out_dir": "runs/exp_lr1e-3_bs64",
-        "run_name": "lr1e-3_bs64",
+        "out_dir": "runs/exp_lr1e-3_bs16_norm0_decay0",
+        "run_name": "lr1e-3_bs16_norm0_decay0",
         "log_interval": 10,
         "save_interval": 200,
         "wandb": {
             "enabled": True,
             "project": "cs336-assignment1",
-            "mode": "offline",
+            "mode": "online",
             "tags": ["tinystories", "baseline"],
         },
     }
