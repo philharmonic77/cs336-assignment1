@@ -18,9 +18,10 @@ def save_checkpoint(model: nn.Module,
 
 def load_checkpoint(src: str | os.PathLike | BinaryIO | IO[bytes], 
                     model: nn.Module, 
-                    optimizer: torch.optim.Optimizer):
+                    optimizer: torch.optim.Optimizer,
+                    device: torch.device | str = "cpu"):
     
-    checkpoint = torch.load(src)
+    checkpoint = torch.load(src, map_location=device)
 
     model.load_state_dict(checkpoint["model"])
     optimizer.load_state_dict(checkpoint["optimizer"])
