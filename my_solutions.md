@@ -263,6 +263,7 @@ $$
 | **Total** |  | $$\approx 13$$ |
 
 **Overall:** for \(P\) parameters,
+
 $$
 \text{FLOPs}_{\text{AdamW}} \approx 13P = \Theta(P).
 $$
@@ -277,6 +278,7 @@ $$
 FLOPs(forward) = 3591T
 
 FLOPs(forward + backward) = 3 x 3591 = 10773T
+
 $$
 \#\text{params}
 =2VD+D+N(2DF+4D^2+2D).
