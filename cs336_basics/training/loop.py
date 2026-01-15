@@ -5,6 +5,7 @@ import math
 import time
 from pathlib import Path
 import shutil
+import json
 import random
 import argparse
 import importlib.util
@@ -147,6 +148,18 @@ def train(cfg: dict[str, Any]) -> None:
     train_tokens_since_log = 0
     train_time_since_log = 0.0
 
+    # init best valid loss 
+    best_eval_loss = None
+    best_meta_path = ckpt_dir / "best_meta.json"
+    if best_meta_path.exists():
+        with open(best_meta_path, "r") as f:
+            meta = json.load(f)
+        best_eval_loss = float(meta.get("best_valid_loss"))
+        print(
+            f"[info] loaded best meta: iter={meta.get('best_iter')}, "
+            f"best_valid_loss={best_eval_loss:.6f}"
+        )
+
     for it in range(start_iter, max_iters):
 
         if scfg["type"] == "cosine":
@@ -211,10 +224,30 @@ def train(cfg: dict[str, Any]) -> None:
                 )
                 t_eval1 = time.perf_counter()
 
+                # save best valid ckpt
+
+                if best_eval_loss is None or valid_loss < best_eval_loss:
+                    best_eval_loss = valid_loss
+                    save_checkpoint(model, optimizer, it + 1, ckpt_dir / "best.pt")
+                    best_meta = {
+                        "best_iter": int(it + 1),
+                        "best_valid_loss": float(valid_loss),
+                        "best_valid_ppl": float(valid_ppl),
+                    }
+                    with open(best_meta_path, "w") as f:
+                        json.dump(best_meta, f, indent=2)
+
+                    print(
+                        f"[info] best updated at iter={it+1}, "
+                        f"valid_loss={valid_loss:.6f}, "
+                        f"valid_ppl={valid_ppl:.3f}"
+                    )
+
                 metrics.update({
                     "valid/loss": valid_loss,
                     "valid/ppl": valid_ppl,
                     "time/eval_sec": float(t_eval1 - t_eval0),
+                    "valid/best_loss" : best_eval_loss
                 })
 
             if do_log:
@@ -252,10 +285,8 @@ def train(cfg: dict[str, Any]) -> None:
                 run.log(metrics, step=it + 1)
 
         if (it + 1) % save_interval == 0:
-            ckpt_path = ckpt_dir / f"ckpt_iter{it+1:06d}.pt"
-            save_checkpoint(model, optimizer, it + 1, ckpt_path)
             latest_path = ckpt_dir / "latest.pt"
-            shutil.copyfile(ckpt_path, latest_path)
+            save_checkpoint(model, optimizer, it + 1, latest_path)
 
     # 7) finalize
 
